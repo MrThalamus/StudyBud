@@ -1,6 +1,7 @@
 export interface Topic {
   id: number;
   name: string;
+  room_count: number;
 }
 
 export interface Room {
@@ -20,6 +21,7 @@ export interface Message {
   id: number;
   user: number;
   room: number;
+  room_name: string;
   user_name: string | null;
   user_avatar: string | null;
   body: string;

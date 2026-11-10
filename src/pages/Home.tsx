@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
-import { useAuth } from "../context/useAuth";
 import { getRooms } from "../api/rooms";
 import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
+import TopicsSidebar from "../components/TopicsSidebar";
 import type { Room, Topic } from "../types";
 
 interface RoomsResult {
@@ -14,9 +14,14 @@ interface RoomsResult {
 }
 
 export default function Home() {
-  const { user, loading: authLoading, logout } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const q = searchParams.get("q") ?? "";
 
-  const [q, setQ] = useState("");
+    function setQ(value: string) {
+      setSearchParams(value ? { q: value } : {});
+    }
+
+
   const [topics, setTopics] = useState<Topic[]>([]);
   const [result, setResult] = useState<RoomsResult>({
     query: null,
@@ -45,78 +50,47 @@ export default function Home() {
     return () => controller.abort();
   }, [q]);
 
-  if (authLoading) return <p>Loading...</p>;
+    return (
+        <div className="container layout">
+          <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
 
-  return (
-    <div>
-      <h1>StudyBud</h1>
-      {user ? (
-        <>
-          <p>Logged in as {user.username}</p>
-          <button onClick={logout}>Log out</button>
-        </>
-      ) : (
-        <Link to="/login">Log in</Link>
-      )}
+          <main>
+            {roomsLoading && <p>Loading rooms...</p>}
+            {result.errors.map((msg) => (
+              <p key={msg}>{msg}</p>
+            ))}
+            {!roomsLoading && result.errors.length === 0 && (
+              <p>
+                {result.rooms.length === 0
+                  ? "No rooms found. Try another search."
+                  : `${result.rooms.length} rooms found`}
+              </p>
+            )}
 
-      <hr />
-      <input
-        type="search"
-        placeholder="Search rooms..."
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
+            <ul>
+              {result.rooms.map((room) => (
+                <li key={room.id}>
+                  <h3>
+                    <Link to={`/room/${room.id}`}>{room.name}</Link>
+                  </h3>
+                  <p>
+                    Hosted by {room.host_name ?? "Unknown"} ·{" "}
+                    {room.topic_name ?? "No topic"}
+                  </p>
+                  <p>
+                    {room.participants.length} joined · created{" "}
+                    {new Date(room.created).toLocaleDateString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </main>
 
-      <h2>Browse topics</h2>
-      <ul>
-        <li>
-          <button type="button" onClick={() => setQ("")} disabled={q === ""}>
-            All
-          </button>
-        </li>
-        {topics.map((topic) => (
-          <li key={topic.id}>
-            <button
-              type="button"
-              onClick={() => setQ(topic.name)}
-              disabled={q === topic.name}
-            >
-              {topic.name}
-            </button>
-          </li>
-        ))}
-      </ul>
+          <aside>
+            <h2 className="section-title">Recent activity</h2>
+            <p className="muted">Coming soon</p>
+          </aside>
+        </div>
+      );
 
-      <hr />
-      {roomsLoading && <p>Loading rooms...</p>}
-      {result.errors.map((msg) => (
-        <p key={msg}>{msg}</p>
-      ))}
-      {!roomsLoading && result.errors.length === 0 && (
-        <p>
-          {result.rooms.length === 0
-            ? "No rooms found. Try another search."
-            : `${result.rooms.length} rooms found`}
-        </p>
-      )}
-
-      <ul>
-        {result.rooms.map((room) => (
-          <li key={room.id}>
-            <h3>
-              <Link to={`/room/${room.id}`}>{room.name}</Link>
-            </h3>
-            <p>
-              Hosted by {room.host_name ?? "Unknown"} ·{" "}
-              {room.topic_name ?? "No topic"}
-            </p>
-            <p>
-              {room.participants.length} joined · created{" "}
-              {new Date(room.created).toLocaleDateString()}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 }

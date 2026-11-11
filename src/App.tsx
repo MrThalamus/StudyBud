@@ -8,6 +8,7 @@ import CreateRoom from "./pages/CreateRoom";
 import EditRoom from "./pages/EditRoom";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 
 
 
@@ -40,6 +41,15 @@ function App() {
           }
         />
         <Route path="/profile/:id" element={<Profile />} />
+
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth>
+              <EditProfile />
+            </RequireAuth>
+          }
+        />
 
         <Route path="*" element={<h1>Page not found</h1>} />
       </Routes>

@@ -1,5 +1,5 @@
 import client from "./client";
-import type { Message, Room, User } from "../types";
+import type { CurrentUser, Message, Room, User } from "../types";
 
 export async function getUser(id: number, signal?: AbortSignal): Promise<User> {
   const response = await client.get<User>(`/users/${id}/`, { signal });
@@ -21,5 +21,10 @@ export async function getUserMessages(
   const response = await client.get<Message[]>(`/users/${id}/messages/`, {
     signal,
   });
+  return response.data;
+}
+
+export async function updateProfile(data: FormData): Promise<CurrentUser> {
+  const response = await client.patch<CurrentUser>("/users/update/", data);
   return response.data;
 }

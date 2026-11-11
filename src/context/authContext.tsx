@@ -55,9 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
     }
   }
+  function updateUser(next: CurrentUser) {
+    setUser(next);
+  }
+
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

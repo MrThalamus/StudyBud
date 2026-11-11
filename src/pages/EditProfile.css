@@ -1,0 +1,10 @@
+.edit-profile-avatar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.edit-profile-avatar-img {
+  width: 72px;
+  height: 72px;
+}

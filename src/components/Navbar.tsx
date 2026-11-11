@@ -41,8 +41,11 @@ export default function Navbar() {
           {!loading &&
             (user ? (
               <>
-                <img src={mediaUrl(user.avatar)} alt="" className="avatar" />
-                <span className="navbar-username">@{user.username}</span>
+                <Link to={`/profile/${user.id}`} className="navbar-profile">
+                  <img src={mediaUrl(user.avatar)} alt="" className="avatar" />
+                  <span className="navbar-username">@{user.username}</span>
+                </Link>
+
                 <button type="button" className="btn" onClick={logout}>
                   Log out
                 </button>

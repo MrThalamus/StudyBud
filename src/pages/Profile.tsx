@@ -8,6 +8,8 @@ import { timeAgo } from "../utils/timeAgo";
 import RoomCard from "../components/RoomCard";
 import type { Message, Room, User } from "../types";
 import "./Profile.css";
+import { useAuth } from "../context/useAuth";
+
 
 const MAX_MESSAGES = 10;
 
@@ -23,6 +25,8 @@ export default function Profile() {
   const { id } = useParams();
   const profileId = Number(id);
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
+
 
   const [result, setResult] = useState<ProfileResult | null>(null);
 
@@ -91,36 +95,43 @@ export default function Profile() {
             <h1>{user.name ?? user.username}</h1>
             <p className="muted">@{user.username}</p>
             <p className="profile-bio">{user.bio ?? "No bio yet."}</p>
-      </aside>
+            {currentUser?.id === user.id && (
+              <Link to="/settings" className="btn">
+                Edit profile
+              </Link>
+            )}
+          </aside>
 
-      <main>
-        <h2 className="section-title">Rooms hosted ({rooms.length})</h2>
-        {rooms.length === 0 && (
-          <p className="muted">This user hasn't hosted any rooms yet.</p>
-        )}
-        <div className="room-feed">
-          {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} onTopicClick={goToTopic} />
-          ))}
-        </div>
-      </main>
+          <main>
+            <h2 className="section-title">Rooms hosted ({rooms.length})</h2>
+            {rooms.length === 0 && (
+              <p className="muted">This user hasn't hosted any rooms yet.</p>
+            )}
+            <div className="room-feed">
+              {rooms.map((room) => (
+                <RoomCard key={room.id} room={room} onTopicClick={goToTopic} />
+              ))}
+            </div>
+          </main>
 
-      <aside>
-        <h2 className="section-title">Recent messages</h2>
-        {messages.length === 0 && <p className="muted">No messages yet.</p>}
-        <div className="profile-messages">
-          {messages.slice(0, MAX_MESSAGES).map((message) => (
-            <article key={message.id} className="card profile-message">
-              <p className="muted">
-                replied to{" "}
-                <Link to={`/room/${message.room}`}>{message.room_name}</Link> ·{" "}
-                {timeAgo(message.created)}
-              </p>
-              <p className="profile-message-body">{message.body}</p>
-            </article>
-          ))}
-        </div>
-      </aside>
+          <aside>
+            <h2 className="section-title">Recent messages</h2>
+            {messages.length === 0 && <p className="muted">No messages yet.</p>}
+            <div className="profile-messages">
+              {messages.slice(0, MAX_MESSAGES).map((message) => (
+                <article key={message.id} className="card profile-message">
+                  <p className="muted">
+                    replied to{" "}
+                    <Link to={`/room/${message.room}`}>
+                      {message.room_name}
+                    </Link>{" "}
+                    · {timeAgo(message.created)}
+                  </p>
+                  <p className="profile-message-body">{message.body}</p>
+                </article>
+              ))}
+            </div>
+          </aside>
         </div>
       </>
     );

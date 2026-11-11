@@ -15,3 +15,14 @@ export async function getRoomMessages(
   });
   return response.data;
 }
+
+export async function createMessage(
+  roomId: number,
+  body: string,
+): Promise<Message> {
+  const response = await client.post<Message>(`/rooms/${roomId}/messages/`, {
+    body,
+  });
+  return response.data;
+}
+

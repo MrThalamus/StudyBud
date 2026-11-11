@@ -6,6 +6,7 @@ import { getRoomMessages } from "../api/messages";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import { mediaUrl } from "../utils/mediaUrl";
 import { timeAgo } from "../utils/timeAgo";
+import MessageForm from "../components/MessageForm";
 import type { Message, Room } from "../types";
 import "./RoomDetail.css";
 
@@ -65,6 +66,13 @@ export default function RoomDetail() {
 
   const { room, messages } = result;
 
+    function handlePosted(message: Message) {
+      setResult((prev) =>
+        prev ? { ...prev, messages: [message, ...prev.messages] } : prev,
+      );
+    }
+
+
   return (
     <div className="container room-detail">
       <Link to="/" className="muted">
@@ -82,6 +90,7 @@ export default function RoomDetail() {
 
       <section className="card">
         <h2 className="section-title">Conversation</h2>
+        <MessageForm roomId={room.id} onPosted={handlePosted} />
 
         {messages.length === 0 && (
           <p className="muted">No messages yet. Be the first to reply.</p>

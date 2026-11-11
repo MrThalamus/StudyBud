@@ -1,0 +1,16 @@
+.message-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.message-form textarea {
+  resize: vertical;
+}
+
+.message-form-error {
+  color: var(--danger);
+  font-size: 0.875rem;
+}

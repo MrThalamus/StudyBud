@@ -1,0 +1,33 @@
+.room-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  padding-bottom: 48px;
+  max-width: 800px;
+}
+
+.room-detail-status {
+  padding-top: 24px;
+}
+
+.room-detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-detail-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.room-detail-message {
+  display: flex;
+  gap: 12px;
+}
+
+.room-detail-body {
+  overflow-wrap: anywhere;
+}

@@ -3,6 +3,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
+import RoomDetail from "./pages/RoomDetail";
+
 
 
 function App() {
@@ -10,11 +12,12 @@ function App() {
     <>
       <Navbar />
       <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="*" element={<h1>Page not found</h1>} />
-    </Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/room/:id" element={<RoomDetail />} />
+        <Route path="*" element={<h1>Page not found</h1>} />
+      </Routes>
     </>
   );
 }

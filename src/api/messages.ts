@@ -26,3 +26,7 @@ export async function createMessage(
   return response.data;
 }
 
+export async function deleteMessage(id: number): Promise<void> {
+  await client.delete(`/messages/${id}/delete/`);
+}
+

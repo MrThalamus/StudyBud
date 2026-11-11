@@ -31,3 +31,32 @@
 .room-detail-body {
   overflow-wrap: anywhere;
 }
+
+.room-detail-message>div {
+  flex: 1;
+  min-width: 0;
+}
+
+.room-detail-delete {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.room-detail-delete:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.room-detail-error {
+  color: var(--danger);
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+}

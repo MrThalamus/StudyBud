@@ -28,3 +28,31 @@
   background: var(--bg);
   overflow-wrap: anywhere;
 }
+
+.activity-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+}
+
+.activity-delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.activity-delete:hover {
+  background: var(--danger);
+  color: #fff;
+}

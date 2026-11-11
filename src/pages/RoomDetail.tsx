@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { isCancel, isAxiosError } from "axios";
 import { getRoom } from "../api/rooms";
-import { getRoomMessages } from "../api/messages";
+import { getRoomMessages, deleteMessage } from "../api/messages";
+import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import { mediaUrl } from "../utils/mediaUrl";
 import { timeAgo } from "../utils/timeAgo";
@@ -21,7 +22,11 @@ export default function RoomDetail() {
   const { id } = useParams();
   const roomId = Number(id);
 
-  const [result, setResult] = useState<RoomResult | null>(null);
+    const { user } = useAuth();
+
+    const [result, setResult] = useState<RoomResult | null>(null);
+    const [deleteErrors, setDeleteErrors] = useState<string[]>([]);
+
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,13 +69,32 @@ export default function RoomDetail() {
     );
   }
 
-  const { room, messages } = result;
+    const { room, messages } = result;
 
     function handlePosted(message: Message) {
       setResult((prev) =>
         prev ? { ...prev, messages: [message, ...prev.messages] } : prev,
       );
     }
+      async function handleDelete(messageId: number) {
+        if (!window.confirm("Delete this message?")) return;
+
+        setDeleteErrors([]);
+        try {
+          await deleteMessage(messageId);
+          setResult((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  messages: prev.messages.filter((m) => m.id !== messageId),
+                }
+              : prev,
+          );
+        } catch (err) {
+          setDeleteErrors(getErrorMessages(err));
+        }
+      }
+
 
 
   return (
@@ -91,6 +115,12 @@ export default function RoomDetail() {
       <section className="card">
         <h2 className="section-title">Conversation</h2>
         <MessageForm roomId={room.id} onPosted={handlePosted} />
+
+        {deleteErrors.map((msg) => (
+          <p key={msg} className="room-detail-error">
+            {msg}
+          </p>
+        ))}
 
         {messages.length === 0 && (
           <p className="muted">No messages yet. Be the first to reply.</p>
@@ -113,6 +143,15 @@ export default function RoomDetail() {
                 </p>
                 <p className="room-detail-body">{message.body}</p>
               </div>
+              {user?.id === message.user && (
+                <button
+                  type="button"
+                  className="room-detail-delete"
+                  onClick={() => handleDelete(message.id)}
+                >
+                  Delete
+                </button>
+              )}
             </article>
           ))}
         </div>

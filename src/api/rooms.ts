@@ -23,3 +23,8 @@ export async function updateRoom(
   const response = await client.patch<Room>(`/rooms/${id}/update/`, values);
   return response.data;
 }
+
+export async function deleteRoom(id: number): Promise<void> {
+  await client.delete(`/rooms/${id}/delete/`);
+}
+

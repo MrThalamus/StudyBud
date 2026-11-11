@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { isCancel, isAxiosError } from "axios";
-import { getRoom } from "../api/rooms";
+import { getRoom, deleteRoom } from "../api/rooms";
 import { getRoomMessages, deleteMessage } from "../api/messages";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
@@ -10,6 +10,8 @@ import { timeAgo } from "../utils/timeAgo";
 import MessageForm from "../components/MessageForm";
 import type { Message, Room } from "../types";
 import "./RoomDetail.css";
+
+
 
 interface RoomResult {
   id: number;
@@ -21,10 +23,11 @@ interface RoomResult {
 export default function RoomDetail() {
   const { id } = useParams();
   const roomId = Number(id);
-
-    const { user } = useAuth();
-
-    const [result, setResult] = useState<RoomResult | null>(null);
+  const navigate = useNavigate();
+  const [roomErrors, setRoomErrors] = useState<string[]>([]);
+    const [deletingRoom, setDeletingRoom] = useState(false);
+  const { user } = useAuth();
+  const [result, setResult] = useState<RoomResult | null>(null);
     const [deleteErrors, setDeleteErrors] = useState<string[]>([]);
 
 
@@ -95,7 +98,24 @@ export default function RoomDetail() {
         }
       }
 
+        async function handleDeleteRoom() {
+          if (
+            !window.confirm(
+              "Delete this room and all of its messages? This cannot be undone.",
+            )
+          )
+            return;
 
+          setRoomErrors([]);
+          setDeletingRoom(true);
+          try {
+            await deleteRoom(room.id);
+            navigate("/");
+          } catch (err) {
+            setRoomErrors(getErrorMessages(err));
+            setDeletingRoom(false);
+          }
+        }
 
   return (
     <div className="container room-detail">
@@ -107,11 +127,30 @@ export default function RoomDetail() {
         <div className="room-detail-title">
           <h1>{room.name}</h1>
           {user?.id === room.host && (
-            <Link to={`/room/${room.id}/edit`} className="btn room-detail-edit">
-              Edit room
-            </Link>
+            <div className="room-detail-actions">
+              <Link
+                to={`/room/${room.id}/edit`}
+                className="btn room-detail-edit"
+              >
+                Edit room
+              </Link>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDeleteRoom}
+                disabled={deletingRoom}
+              >
+                {deletingRoom ? "Deleting..." : "Delete room"}
+              </button>
+            </div>
           )}
         </div>
+
+        {roomErrors.map((msg) => (
+          <p key={msg} className="room-detail-error">
+            {msg}
+          </p>
+        ))}
 
         <p className="muted">
           Hosted by {room.host_name ?? "Unknown"} ·{" "}

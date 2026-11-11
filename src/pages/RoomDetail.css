@@ -83,3 +83,38 @@
   display: flex;
   gap: 8px;
 }
+
+.room-detail-columns {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 16px;
+  align-items: start;
+}
+
+.room-detail-participant-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-detail-participant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.room-detail-participant:hover {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+@media (max-width: 720px) {
+  .room-detail-columns {
+    grid-template-columns: 1fr;
+  }
+}

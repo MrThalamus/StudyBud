@@ -1,0 +1,49 @@
+.profile-status {
+  padding-top: 24px;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.profile-card h1 {
+  font-size: 1.25rem;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+}
+
+.profile-bio {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.profile-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-message {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+}
+
+.profile-message-body {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  overflow-wrap: anywhere;
+}
+
+.profile-back {
+  padding-top: 16px;
+}

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { isCancel, isAxiosError } from "axios";
-import { getRoom, deleteRoom } from "../api/rooms";
+import { getRoom, getRoomParticipants, deleteRoom } from "../api/rooms";
 import { getRoomMessages, deleteMessage } from "../api/messages";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import { mediaUrl } from "../utils/mediaUrl";
 import { timeAgo } from "../utils/timeAgo";
 import MessageForm from "../components/MessageForm";
-import type { Message, Room } from "../types";
+import type { Message, Room, User } from "../types";
 import "./RoomDetail.css";
 
 
@@ -17,6 +17,7 @@ interface RoomResult {
   id: number;
   room: Room | null;
   messages: Message[];
+  participants: User[]; 
   errors: string[];
 }
 
@@ -34,23 +35,26 @@ export default function RoomDetail() {
   useEffect(() => {
     const controller = new AbortController();
 
-    Promise.all([
-      getRoom(roomId, controller.signal),
-      getRoomMessages(roomId, controller.signal),
-    ])
-      .then(([room, messages]) =>
-        setResult({ id: roomId, room, messages, errors: [] }),
-      )
-      .catch((err) => {
-        if (isCancel(err)) return;
-        const notFound = isAxiosError(err) && err.response?.status === 404;
-        setResult({
-          id: roomId,
-          room: null,
-          messages: [],
-          errors: notFound ? ["Room not found."] : getErrorMessages(err),
-        });
-      });
+        Promise.all([
+          getRoom(roomId, controller.signal),
+          getRoomMessages(roomId, controller.signal),
+          getRoomParticipants(roomId, controller.signal),
+        ])
+          .then(([room, messages, participants]) =>
+            setResult({ id: roomId, room, messages, participants, errors: [] }),
+          )
+
+          .catch((err) => {
+            if (isCancel(err)) return;
+            const notFound = isAxiosError(err) && err.response?.status === 404;
+            setResult({
+              id: roomId,
+              room: null,
+              messages: [],
+              participants: [],
+              errors: notFound ? ["Room not found."] : getErrorMessages(err),
+            });
+          });
 
     return () => controller.abort();
   }, [roomId]);
@@ -71,14 +75,24 @@ export default function RoomDetail() {
       </div>
     );
   }
+    const { room, messages, participants } = result;
 
-    const { room, messages } = result;
 
-    function handlePosted(message: Message) {
-      setResult((prev) =>
-        prev ? { ...prev, messages: [message, ...prev.messages] } : prev,
-      );
-    }
+      function handlePosted(message: Message) {
+        setResult((prev) => {
+          if (!prev) return prev;
+          const joined =
+            !user || prev.participants.some((p) => p.id === user.id)
+              ? prev.participants
+              : [...prev.participants, user];
+          return {
+            ...prev,
+            messages: [message, ...prev.messages],
+            participants: joined,
+          };
+        });
+      }
+
       async function handleDelete(messageId: number) {
         if (!window.confirm("Delete this message?")) return;
 
@@ -122,7 +136,6 @@ export default function RoomDetail() {
       <Link to="/" className="muted">
         ← Back to rooms
       </Link>
-
       <section className="card room-detail-header">
         <div className="room-detail-title">
           <h1>{room.name}</h1>
@@ -153,14 +166,19 @@ export default function RoomDetail() {
         ))}
 
         <p className="muted">
-          Hosted by {room.host_name ?? "Unknown"} ·{" "}
-          {room.topic_name ?? "No topic"} · created {timeAgo(room.created)}
+          Hosted by{" "}
+          {room.host ? (
+            <Link to={`/profile/${room.host}`}>@{room.host_name}</Link>
+          ) : (
+            "Unknown"
+          )}{" "}
+          · {room.topic_name ?? "No topic"} · created {timeAgo(room.created)}
         </p>
-        {room.description && <p>{room.description}</p>}
-      </section>
-
-      <section className="card">
-        <h2 className="section-title">Conversation</h2>
+      </section>{" "}
+      {room.description && <p>{room.description}</p>}
+      <div className="room-detail-columns">
+        <section className="card">
+          <h2 className="section-title">Conversation</h2>
         <MessageForm roomId={room.id} onPosted={handlePosted} />
 
         {deleteErrors.map((msg) => (
@@ -203,6 +221,27 @@ export default function RoomDetail() {
           ))}
         </div>
       </section>
+
+        <aside className="card room-detail-participants">
+          <h2 className="section-title">Participants ({participants.length})</h2>
+          {participants.length === 0 && (
+            <p className="muted">Nobody has joined yet.</p>
+          )}
+          <ul className="room-detail-participant-list">
+            {participants.map((p) => (
+              <li key={p.id}>
+                <Link to={`/profile/${p.id}`} className="room-detail-participant">
+                  <img src={mediaUrl(p.avatar)} alt="" className="avatar" />
+                  <span>
+                    {p.name ?? p.username}
+                    <span className="muted"> @{p.username}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </div>
     </div>
   );
 }

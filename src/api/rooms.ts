@@ -1,5 +1,5 @@
 import client from "./client";
-import type { Room, RoomFormValues } from "../types";
+import type { Room, RoomFormValues, User } from "../types";
 
 export async function getRooms(q?: string, signal?: AbortSignal): Promise<Room[]> {
   const response = await client.get<Room[]>("/rooms/", { params: { q }, signal });
@@ -28,3 +28,12 @@ export async function deleteRoom(id: number): Promise<void> {
   await client.delete(`/rooms/${id}/delete/`);
 }
 
+export async function getRoomParticipants(
+  id: number,
+  signal?: AbortSignal,
+): Promise<User[]> {
+  const response = await client.get<User[]>(`/rooms/${id}/participants/`, {
+    signal,
+  });
+  return response.data;
+}

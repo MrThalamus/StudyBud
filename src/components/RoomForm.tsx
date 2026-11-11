@@ -18,7 +18,7 @@ export default function RoomForm({
   onSubmit,
 }: RoomFormProps) {
   const [name, setName] = useState(initial?.name ?? "");
-    const [topic, setTopic] = useState(initial?.topic_name ?? "");
+  const [topic, setTopic] = useState(initial?.topic_name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -34,7 +34,7 @@ export default function RoomForm({
         description: description.trim(),
       });
 
-    } catch (err) {
+    }catch (err) {
       setErrors(getErrorMessages(err));
       setSubmitting(false);
     }
@@ -61,7 +61,7 @@ export default function RoomForm({
 
       <label className="room-form-field">
         <span>Topic</span>
-                <input
+          <input
           className="input"
           list="room-form-topics"
           value={topic}

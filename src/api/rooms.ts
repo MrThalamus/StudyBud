@@ -15,3 +15,11 @@ export async function createRoom(values: RoomFormValues): Promise<Room> {
   const response = await client.post<Room>("/rooms/", values);
   return response.data;
 }
+
+export async function updateRoom(
+  id: number,
+  values: RoomFormValues,
+): Promise<Room> {
+  const response = await client.patch<Room>(`/rooms/${id}/update/`, values);
+  return response.data;
+}

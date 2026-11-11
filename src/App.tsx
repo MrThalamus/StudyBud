@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import RoomDetail from "./pages/RoomDetail";
 import CreateRoom from "./pages/CreateRoom";
+import EditRoom from "./pages/EditRoom";
 import RequireAuth from "./components/RequireAuth";
 
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/room/:id" element={<RoomDetail />} />
+        {/* create */}
         <Route
           path="/create-room"
           element={
@@ -27,6 +29,16 @@ function App() {
             </RequireAuth>
           }
         />
+        {/* update */}
+        <Route
+          path="/room/:id/edit"
+          element={
+            <RequireAuth>
+              <EditRoom />
+            </RequireAuth>
+          }
+        />
+
         <Route path="*" element={<h1>Page not found</h1>} />
       </Routes>
     </>

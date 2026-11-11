@@ -43,7 +43,7 @@ export interface CurrentUser extends User {
 }
 
 export interface RoomFormValues {
-  name: string; 
-  topic_name: string;
+  name: string;
+  topic_name: string; 
   description: string;
 }

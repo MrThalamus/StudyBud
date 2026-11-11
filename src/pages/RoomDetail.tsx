@@ -104,7 +104,15 @@ export default function RoomDetail() {
       </Link>
 
       <section className="card room-detail-header">
-        <h1>{room.name}</h1>
+        <div className="room-detail-title">
+          <h1>{room.name}</h1>
+          {user?.id === room.host && (
+            <Link to={`/room/${room.id}/edit`} className="btn room-detail-edit">
+              Edit room
+            </Link>
+          )}
+        </div>
+
         <p className="muted">
           Hosted by {room.host_name ?? "Unknown"} ·{" "}
           {room.topic_name ?? "No topic"} · created {timeAgo(room.created)}

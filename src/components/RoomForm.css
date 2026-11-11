@@ -1,0 +1,25 @@
+.room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.room-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.room-form-field textarea {
+  resize: vertical;
+}
+
+.room-form-error {
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.room-form .btn {
+  align-self: flex-start;
+}

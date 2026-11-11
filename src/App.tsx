@@ -4,6 +4,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import RoomDetail from "./pages/RoomDetail";
+import CreateRoom from "./pages/CreateRoom";
+import RequireAuth from "./components/RequireAuth";
+
 
 
 
@@ -16,6 +19,14 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/room/:id" element={<RoomDetail />} />
+        <Route
+          path="/create-room"
+          element={
+            <RequireAuth>
+              <CreateRoom />
+            </RequireAuth>
+          }
+        />
         <Route path="*" element={<h1>Page not found</h1>} />
       </Routes>
     </>

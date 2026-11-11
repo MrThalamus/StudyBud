@@ -41,3 +41,9 @@ export interface User {
 export interface CurrentUser extends User {
   email: string;
 }
+
+export interface RoomFormValues {
+  name: string; 
+  topic_name: string;
+  description: string;
+}

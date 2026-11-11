@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
 import { getRooms } from "../api/rooms";
 import { getTopics } from "../api/topics";
@@ -57,6 +57,10 @@ export default function Home() {
         <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
 
         <main>
+          <Link to="/create-room" className="btn btn-primary">
+            + Create room
+          </Link>
+
           {roomsLoading && <p>Loading rooms...</p>}
           {result.errors.map((msg) => (
             <p key={msg}>{msg}</p>

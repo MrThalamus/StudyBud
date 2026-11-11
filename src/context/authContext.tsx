@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import * as authApi from "../api/auth";
+import { setUnauthorizedHandler } from "../api/client";
 import { getToken, setToken, clearToken } from "../api/token";
 import type { CurrentUser } from "../types";
 import { AuthContext } from "./auth-context";
+
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    setUnauthorizedHandler(() => setUser(null));
+    return () => setUnauthorizedHandler(null);
+  }, []);
+  
   useEffect(() => {
     async function init() {
       if (getToken()) {

@@ -9,7 +9,7 @@ import EditRoom from "./pages/EditRoom";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
-
+import NotFound from "./pages/NotFound";
 
 
 
@@ -51,7 +51,7 @@ function App() {
           }
         />
 
-        <Route path="*" element={<h1>Page not found</h1>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

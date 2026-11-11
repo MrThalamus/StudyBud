@@ -9,6 +9,7 @@ export interface Room {
   host: number | null;
   topic: number | null;
   host_name: string | null;
+  host_avatar: string | null;
   topic_name: string | null;
   name: string;
   description: string | null;

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
 import { getRooms } from "../api/rooms";
 import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import TopicsSidebar from "../components/TopicsSidebar";
+import RoomCard from "../components/RoomCard";
 import type { Room, Topic } from "../types";
 
 interface RoomsResult {
@@ -51,46 +52,34 @@ export default function Home() {
   }, [q]);
 
     return (
-        <div className="container layout">
-          <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
+      <div className="container layout">
+        <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
 
-          <main>
-            {roomsLoading && <p>Loading rooms...</p>}
-            {result.errors.map((msg) => (
-              <p key={msg}>{msg}</p>
+        <main>
+          {roomsLoading && <p>Loading rooms...</p>}
+          {result.errors.map((msg) => (
+            <p key={msg}>{msg}</p>
+          ))}
+          {!roomsLoading && result.errors.length === 0 && (
+            <p>
+              {result.rooms.length === 0
+                ? "No rooms found. Try another search."
+                : `${result.rooms.length} rooms found`}
+            </p>
+          )}
+
+          <div className="room-feed">
+            {result.rooms.map((room) => (
+              <RoomCard key={room.id} room={room} onTopicClick={setQ} />
             ))}
-            {!roomsLoading && result.errors.length === 0 && (
-              <p>
-                {result.rooms.length === 0
-                  ? "No rooms found. Try another search."
-                  : `${result.rooms.length} rooms found`}
-              </p>
-            )}
+          </div>
+        </main>
 
-            <ul>
-              {result.rooms.map((room) => (
-                <li key={room.id}>
-                  <h3>
-                    <Link to={`/room/${room.id}`}>{room.name}</Link>
-                  </h3>
-                  <p>
-                    Hosted by {room.host_name ?? "Unknown"} ·{" "}
-                    {room.topic_name ?? "No topic"}
-                  </p>
-                  <p>
-                    {room.participants.length} joined · created{" "}
-                    {new Date(room.created).toLocaleDateString()}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </main>
-
-          <aside>
-            <h2 className="section-title">Recent activity</h2>
-            <p className="muted">Coming soon</p>
-          </aside>
-        </div>
-      );
+        <aside>
+          <h2 className="section-title">Recent activity</h2>
+          <p className="muted">Coming soon</p>
+        </aside>
+      </div>
+    );
 
 }

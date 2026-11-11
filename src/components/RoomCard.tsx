@@ -1,0 +1,49 @@
+import { Link } from "react-router-dom";
+import type { Room } from "../types";
+import { mediaUrl } from "../utils/mediaUrl";
+import { timeAgo } from "../utils/timeAgo";
+import "./RoomCard.css";
+
+interface RoomCardProps {
+  room: Room;
+  onTopicClick: (name: string) => void;
+}
+
+export default function RoomCard({ room, onTopicClick }: RoomCardProps) {
+  return (
+    <article className="card room-card">
+      <header className="room-card-header">
+        {room.host ? (
+          <Link to={`/profile/${room.host}`} className="room-card-host">
+            <img src={mediaUrl(room.host_avatar)} alt="" className="avatar" />
+            <span>@{room.host_name}</span>
+          </Link>
+        ) : (
+          <span className="room-card-host muted">Unknown host</span>
+        )}
+        <span className="muted">{timeAgo(room.created)}</span>
+      </header>
+
+      <h3 className="room-card-title">
+        <Link to={`/room/${room.id}`}>{room.name}</Link>
+      </h3>
+
+      {room.description && (
+        <p className="room-card-description">{room.description}</p>
+      )}
+
+      <footer className="room-card-footer">
+        <span className="muted">{room.participants.length} joined</span>
+        {room.topic_name && (
+          <button
+            type="button"
+            className="tag room-card-tag"
+            onClick={() => onTopicClick(room.topic_name!)}
+          >
+            {room.topic_name}
+          </button>
+        )}
+      </footer>
+    </article>
+  );
+}

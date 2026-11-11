@@ -6,6 +6,7 @@ import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import TopicsSidebar from "../components/TopicsSidebar";
 import RoomCard from "../components/RoomCard";
+import ActivityFeed from "../components/ActivityFeed";
 import type { Room, Topic } from "../types";
 
 interface RoomsResult {
@@ -77,7 +78,7 @@ export default function Home() {
 
         <aside>
           <h2 className="section-title">Recent activity</h2>
-          <p className="muted">Coming soon</p>
+          <ActivityFeed />
         </aside>
       </div>
     );

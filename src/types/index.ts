@@ -32,7 +32,7 @@ export interface Message {
 
 export interface User {
   id: number;
-  name: string | null;
+  name: string;
   username: string;
   bio: string | null;
   avatar: string | null;

@@ -91,6 +91,7 @@ export default function EditProfile() {
         <label className="room-form-field">
           <span>Name</span>
           <input
+            required
             className="input"
             value={name}
             onChange={(e) => setName(e.target.value)}

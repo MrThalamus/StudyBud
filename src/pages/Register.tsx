@@ -3,6 +3,9 @@ import type { FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
+import AuthCard from "../components/AuthCard";
+import PasswordField from "../components/PasswordField";
+import { UserIcon } from "../components/icons";
 
 export default function Register() {
   const { user, loading, register } = useAuth();
@@ -43,49 +46,89 @@ export default function Register() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Register</h1>
-      {errors.map((msg) => (
-        <p key={msg}>{msg}</p>
-      ))}
-      <input
-        placeholder="Name"
-        value={form.name}
-        onChange={(e) => update("name", e.target.value)}
-      />
-      <input
-        placeholder="Username"
-        value={form.username}
-        onChange={(e) => update("username", e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={(e) => update("email", e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={form.password1}
-        onChange={(e) => update("password1", e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Confirm password"
-        value={form.password2}
-        onChange={(e) => update("password2", e.target.value)}
-        required
-      />
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Creating account..." : "Register"}
-      </button>
-      <p>
-        Already registered? <Link to="/login">Log in</Link>
-      </p>
-    </form>
+    <AuthCard
+      title="Register"
+      tagline="Create your StudyBud account"
+      footer={
+        <>
+          Already registered? <Link to="/login">Log in</Link>
+        </>
+      }
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        {errors.length > 0 && (
+          <div className="auth-error" role="alert">
+            {errors.map((msg) => (
+              <p key={msg}>{msg}</p>
+            ))}
+          </div>
+        )}
+
+        <div className="auth-field">
+          <label htmlFor="register-name">Name</label>
+          <input
+            required
+            id="register-name"
+            className="input"
+            placeholder="e.g. saikot"
+            autoComplete="name"
+            value={form.name}
+            onChange={(e) => update("name", e.target.value)}
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="register-username">Username</label>
+          <input
+            id="register-username"
+            className="input"
+            placeholder="e.g. saikot"
+            autoComplete="username"
+            value={form.username}
+            onChange={(e) => update("username", e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="register-email">Email</label>
+          <input
+            id="register-email"
+            className="input"
+            type="email"
+            placeholder="e.g. saikot@example.com"
+            autoComplete="email"
+            value={form.email}
+            onChange={(e) => update("email", e.target.value)}
+            required
+          />
+        </div>
+
+        <PasswordField
+          label="Password"
+          value={form.password1}
+          onChange={(value) => update("password1", value)}
+          placeholder="Create a password"
+          autoComplete="new-password"
+        />
+
+        <PasswordField
+          label="Confirm password"
+          value={form.password2}
+          onChange={(value) => update("password2", value)}
+          placeholder="Repeat your password"
+          autoComplete="new-password"
+        />
+
+        <button
+          type="submit"
+          className="btn btn-primary auth-submit"
+          disabled={submitting}
+        >
+          <UserIcon />
+          {submitting ? "Creating account..." : "Register"}
+        </button>
+      </form>
+    </AuthCard>
   );
 }

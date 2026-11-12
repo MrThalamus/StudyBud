@@ -233,7 +233,7 @@ export default function RoomDetail() {
                 <Link to={`/profile/${p.id}`} className="room-detail-participant">
                   <img src={mediaUrl(p.avatar)} alt="" className="avatar" />
                   <span>
-                    {p.name ?? p.username}
+                    {p.name || p.username}
                     <span className="muted"> @{p.username}</span>
                   </span>
                 </Link>

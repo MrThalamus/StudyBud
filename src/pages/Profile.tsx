@@ -92,7 +92,7 @@ export default function Profile() {
               alt=""
               className="avatar profile-avatar"
             />
-            <h1>{user.name ?? user.username}</h1>
+            <h1>{user.name || user.username}</h1>
             <p className="muted">@{user.username}</p>
             <p className="profile-bio">{user.bio ?? "No bio yet."}</p>
             {currentUser?.id === user.id && (

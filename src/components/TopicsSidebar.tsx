@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { Topic } from "../types";
 import "./TopicsSidebar.css";
+import TopicsModal from "./TopicsModal"; 
+
 
 interface TopicsSidebarProps {
   topics: Topic[];
@@ -15,10 +17,16 @@ export default function TopicsSidebar({
   active,
   onSelect,
 }: TopicsSidebarProps) {
-  const [showAll, setShowAll] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
 
-  const totalRooms = topics.reduce((sum, topic) => sum + topic.room_count, 0);
-  const visibleTopics = showAll ? topics : topics.slice(0, VISIBLE_COUNT);
+    const totalRooms = topics.reduce((sum, topic) => sum + topic.room_count, 0);
+    const firstTopics = topics.slice(0, VISIBLE_COUNT);
+    const activeExtra = topics.find(
+      (topic) => topic.name === active && !firstTopics.includes(topic), 
+    );
+    const visibleTopics = activeExtra
+      ? [...firstTopics, activeExtra]
+      : firstTopics;
 
   return (
     <aside className="topics">
@@ -54,10 +62,22 @@ export default function TopicsSidebar({
         <button
           type="button"
           className="topics-more"
-          onClick={() => setShowAll((prev) => !prev)}
+          onClick={() => setModalOpen(true)}
         >
-          {showAll ? "Show less" : "More"}
+          More topics
         </button>
+      )}
+
+      {modalOpen && (
+        <TopicsModal
+          topics={topics}
+          active={active}
+          onSelect={(name) => {
+            onSelect(name);
+            setModalOpen(false);
+          }}
+          onClose={() => setModalOpen(false)}
+        />
       )}
     </aside>
   );

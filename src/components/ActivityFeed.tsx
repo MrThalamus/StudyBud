@@ -45,7 +45,7 @@ export default function ActivityFeed() {
 
   return (
     <aside className="activity">
-      {/* <h2 className="section-title">Recent activity</h2> */}
+      <h2 className="section-title">Recent activity</h2>
 
       {messages === null && errors.length === 0 && (
         <p className="muted">Loading activity...</p>
@@ -75,7 +75,7 @@ export default function ActivityFeed() {
                 <p className="muted">{timeAgo(message.created)}</p>
               </div>
             </div>
-            
+
             <p className="muted">
               replied to{" "}
               <Link to={`/room/${message.room}`}>{message.room_name}</Link>

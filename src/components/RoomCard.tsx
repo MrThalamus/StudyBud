@@ -4,6 +4,9 @@ import { mediaUrl } from "../utils/mediaUrl";
 import { timeAgo } from "../utils/timeAgo";
 import "./RoomCard.css";
 
+// To catch mistakes, we can define the props type for the component. This is a good practice in TypeScript to ensure that the component receives the correct props and helps with autocompletion and type checking in your IDE.
+
+// It describes the shape of the props this component expects, and it exists only to catch mistakes before you run the app
 interface RoomCardProps {
   room: Room;
   onTopicClick: (name: string) => void;

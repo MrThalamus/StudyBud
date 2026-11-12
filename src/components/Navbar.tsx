@@ -16,6 +16,7 @@ export default function Navbar() {
 
   const q = searchParams.get("q") ?? "";
 
+  //it nevigate the search url
   function handleSearch(value: string) {
     const query = value ? `?q=${encodeURIComponent(value)}` : "";
     navigate(`/${query}`, { replace: location.pathname === "/" });
@@ -34,7 +35,7 @@ export default function Navbar() {
           className="input navbar-search"
           placeholder="Search rooms..."
           value={q}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)} //fires on every keystroke(real time search)
         />
 
         <div className="navbar-user">

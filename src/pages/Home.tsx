@@ -57,6 +57,7 @@ export default function Home() {
         <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
 
         <main>
+          <h2 className="section-title">Study Room</h2>
           <Link to="/create-room" className="btn btn-primary">
             + Create room
           </Link>
@@ -81,7 +82,6 @@ export default function Home() {
         </main>
 
         <aside>
-          <h2 className="section-title">Recent activity</h2>
           <ActivityFeed />
         </aside>
       </div>

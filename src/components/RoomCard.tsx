@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Room } from "../types";
-import { mediaUrl } from "../utils/mediaUrl";
+import Avatar from "./Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import "./RoomCard.css";
 
@@ -18,7 +18,7 @@ export default function RoomCard({ room, onTopicClick }: RoomCardProps) {
       <header className="room-card-header">
         {room.host ? (
           <Link to={`/profile/${room.host}`} className="room-card-host">
-            <img src={mediaUrl(room.host_avatar)} alt="" className="avatar" />
+            <Avatar src={room.host_avatar} userId={room.host} />
             <span>@{room.host_name}</span>
           </Link>
         ) : (

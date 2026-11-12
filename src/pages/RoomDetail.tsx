@@ -5,7 +5,7 @@ import { getRoom, getRoomParticipants, deleteRoom } from "../api/rooms";
 import { getRoomMessages, deleteMessage } from "../api/messages";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import { mediaUrl } from "../utils/mediaUrl";
+import Avatar from "../components/Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import MessageForm from "../components/MessageForm";
 import type { Message, Room, User } from "../types";
@@ -179,59 +179,60 @@ export default function RoomDetail() {
       <div className="room-detail-columns">
         <section className="card">
           <h2 className="section-title">Conversation</h2>
-        <MessageForm roomId={room.id} onPosted={handlePosted} />
+          <MessageForm roomId={room.id} onPosted={handlePosted} />
 
-        {deleteErrors.map((msg) => (
-          <p key={msg} className="room-detail-error">
-            {msg}
-          </p>
-        ))}
-
-        {messages.length === 0 && (
-          <p className="muted">No messages yet. Be the first to reply.</p>
-        )}
-
-        <div className="room-detail-messages">
-          {messages.map((message) => (
-            <article key={message.id} className="room-detail-message">
-              <img
-                src={mediaUrl(message.user_avatar)}
-                alt=""
-                className="avatar"
-              />
-              <div>
-                <p>
-                  <Link to={`/profile/${message.user}`}>
-                    @{message.user_name}
-                  </Link>{" "}
-                  <span className="muted">{timeAgo(message.created)}</span>
-                </p>
-                <p className="room-detail-body">{message.body}</p>
-              </div>
-              {user?.id === message.user && (
-                <button
-                  type="button"
-                  className="room-detail-delete"
-                  onClick={() => handleDelete(message.id)}
-                >
-                  Delete
-                </button>
-              )}
-            </article>
+          {deleteErrors.map((msg) => (
+            <p key={msg} className="room-detail-error">
+              {msg}
+            </p>
           ))}
-        </div>
-      </section>
+
+          {messages.length === 0 && (
+            <p className="muted">No messages yet. Be the first to reply.</p>
+          )}
+
+          <div className="room-detail-messages">
+            {messages.map((message) => (
+              <article key={message.id} className="room-detail-message">
+                <Avatar src={message.user_avatar} userId={message.user} />
+                <div>
+                  <p>
+                    <Link to={`/profile/${message.user}`}>
+                      @{message.user_name}
+                    </Link>{" "}
+                    <span className="muted">{timeAgo(message.created)}</span>
+                  </p>
+                  <p className="room-detail-body">{message.body}</p>
+                </div>
+                {user?.id === message.user && (
+                  <button
+                    type="button"
+                    className="room-detail-delete"
+                    onClick={() => handleDelete(message.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
 
         <aside className="card room-detail-participants">
-          <h2 className="section-title">Participants ({participants.length})</h2>
+          <h2 className="section-title">
+            Participants ({participants.length})
+          </h2>
           {participants.length === 0 && (
             <p className="muted">Nobody has joined yet.</p>
           )}
           <ul className="room-detail-participant-list">
             {participants.map((p) => (
               <li key={p.id}>
-                <Link to={`/profile/${p.id}`} className="room-detail-participant">
-                  <img src={mediaUrl(p.avatar)} alt="" className="avatar" />
+                <Link
+                  to={`/profile/${p.id}`}
+                  className="room-detail-participant"
+                >
+                  <Avatar src={p.avatar} userId={p.id} />
                   <span>
                     {p.name || p.username}
                     <span className="muted"> @{p.username}</span>

@@ -1,26 +1,10 @@
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import { mediaUrl } from "../utils/mediaUrl";
+import UserMenu from "./UserMenu";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const { user, loading, logout } = useAuth();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const q = searchParams.get("q") ?? "";
-
-  //it nevigate the search url
-  function handleSearch(value: string) {
-    const query = value ? `?q=${encodeURIComponent(value)}` : "";
-    navigate(`/${query}`, { replace: location.pathname === "/" });
-  }
+  const { user, loading } = useAuth();
 
   return (
     <header className="navbar">
@@ -30,27 +14,10 @@ export default function Navbar() {
           <span className="navbar-logo-text">StudyBud</span>
         </Link>
 
-        <input
-          type="search"
-          className="input navbar-search"
-          placeholder="Search rooms..."
-          value={q}
-          onChange={(e) => handleSearch(e.target.value)} //fires on every keystroke(real time search)
-        />
-
         <div className="navbar-user">
           {!loading &&
             (user ? (
-              <>
-                <Link to={`/profile/${user.id}`} className="navbar-profile">
-                  <img src={mediaUrl(user.avatar)} alt="" className="avatar" />
-                  <span className="navbar-username">@{user.username}</span>
-                </Link>
-
-                <button type="button" className="btn" onClick={logout}>
-                  Log out
-                </button>
-              </>
+              <UserMenu />
             ) : (
               <>
                 <Link to="/login" className="btn">

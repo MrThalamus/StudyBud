@@ -6,6 +6,7 @@ import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
 import TopicsSidebar from "../components/TopicsSidebar";
 import RoomCard from "../components/RoomCard";
+import SearchBar from "../components/SearchBar";
 import ActivityFeed from "../components/ActivityFeed";
 import type { Room, Topic } from "../types";
 
@@ -19,10 +20,9 @@ export default function Home() {
     const [searchParams, setSearchParams] = useSearchParams();
     const q = searchParams.get("q") ?? "";
 
-    function setQ(value: string) {
-      setSearchParams(value ? { q: value } : {});
+    function setQ(value: string, replace = false) {
+      setSearchParams(value ? { q: value } : {}, { replace });
     }
-
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [result, setResult] = useState<RoomsResult>({
@@ -58,6 +58,7 @@ export default function Home() {
 
         <main>
           <h2 className="section-title">Study Room</h2>
+          <SearchBar value={q} onChange={(value) => setQ(value, true)} />
           <Link to="/create-room" className="btn btn-primary">
             + Create room
           </Link>

@@ -4,7 +4,7 @@ import { isCancel } from "axios";
 import { getAllMessages, deleteMessage } from "../api/messages";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import { mediaUrl } from "../utils/mediaUrl";
+import Avatar from "./Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import type { Message } from "../types";
 import "./ActivityFeed.css";
@@ -63,11 +63,7 @@ export default function ActivityFeed() {
         {recent.map((message) => (
           <article key={message.id} className="card activity-item">
             <div className="activity-meta">
-              <img
-                src={mediaUrl(message.user_avatar)}
-                alt=""
-                className="avatar"
-              />
+              <Avatar src={message.user_avatar} userId={message.user} />
               <div>
                 <Link to={`/profile/${message.user}`}>
                   @{message.user_name}

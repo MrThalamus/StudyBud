@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import { isAxiosError, isCancel } from "axios";
 import { getUser, getUserMessages, getUserRooms } from "../api/users";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import { mediaUrl } from "../utils/mediaUrl";
+import Avatar from "../components/Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import RoomCard from "../components/RoomCard";
 import type { Message, Room, User } from "../types";
 import "./Profile.css";
 import { useAuth } from "../context/useAuth";
+import SearchBar from "../components/SearchBar";
 
 
 const MAX_MESSAGES = 10;
@@ -26,6 +27,12 @@ export default function Profile() {
   const profileId = Number(id);
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const q = searchParams.get("q") ?? "";
+
+  function setQ(value: string) {
+    setSearchParams(value ? { q: value } : {}, { replace: true });
+  }
 
 
   const [result, setResult] = useState<ProfileResult | null>(null);
@@ -72,6 +79,12 @@ export default function Profile() {
   }
 
   const { user, rooms, messages } = result;
+  const term = q.trim().toLowerCase();
+  const filteredRooms = rooms.filter((room) =>
+    [room.name, room.description ?? "", room.topic_name ?? ""].some((field) =>
+      field.toLowerCase().includes(term),
+    ),
+  );
 
   function goToTopic(name: string) {
     navigate(`/?q=${encodeURIComponent(name)}`);
@@ -87,10 +100,11 @@ export default function Profile() {
 
         <div className="container layout">
           <aside className="card profile-card">
-            <img
-              src={mediaUrl(user.avatar)}
-              alt=""
-              className="avatar profile-avatar"
+            <Avatar
+              src={user.avatar}
+              userId={user.id}
+              size="lg"
+              className="profile-avatar"
             />
             <h1>{user.name || user.username}</h1>
             <p className="muted">@{user.username}</p>
@@ -103,12 +117,22 @@ export default function Profile() {
           </aside>
 
           <main>
-            <h2 className="section-title">Rooms hosted ({rooms.length})</h2>
+            <h2 className="section-title">
+              Rooms hosted ({filteredRooms.length})
+            </h2>
+            <SearchBar
+              value={q}
+              onChange={setQ}
+              placeholder="Search this user's rooms..."
+            />
             {rooms.length === 0 && (
               <p className="muted">This user hasn't hosted any rooms yet.</p>
             )}
+            {rooms.length > 0 && filteredRooms.length === 0 && (
+              <p className="muted">No rooms match your search.</p>
+            )}
             <div className="room-feed">
-              {rooms.map((room) => (
+              {filteredRooms.map((room) => (
                 <RoomCard key={room.id} room={room} onTopicClick={goToTopic} />
               ))}
             </div>

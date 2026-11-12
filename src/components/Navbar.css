@@ -36,12 +36,6 @@
   color: #fff;
 }
 
-.navbar-search {
-  flex: 1;
-  min-width: 0;
-  max-width: 420px;
-}
-
 .navbar-user {
   margin-left: auto;
   display: flex;
@@ -49,29 +43,13 @@
   gap: 12px;
 }
 
-.navbar-username {
-  font-weight: 500;
-}
 
 @media (max-width: 720px) {
   .navbar-inner {
     gap: 12px;
   }
 
-  .navbar-logo-text,
-  .navbar-username {
+  .navbar-logo-text {
     display: none;
   }
-}
-
-.navbar-profile {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-}
-
-.navbar-profile:hover {
-  text-decoration: none;
-  color: var(--primary);
 }

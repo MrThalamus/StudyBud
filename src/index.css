@@ -55,7 +55,7 @@ img {
 
 /* ============ 3. Reusable pieces ============ */
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -147,10 +147,10 @@ img {
 /* ============ 4. Page layout ============ */
 .layout {
   display: grid;
-  grid-template-columns: 220px 1fr 300px;
+  grid-template-columns:250px 1fr 300px;
   gap: 24px;
   align-items: start;
-  padding-top: 24px;
+  padding-top: 24px; 
   padding-bottom: 48px;
 }
 
@@ -183,22 +183,16 @@ img {
   /* 64px navbar + 24px gap */
 }
 
-/* Right column stays put too, and scrolls inside itself if the feed is long */
+/* Right column stays put while the room list scrolls */
 .home-activity {
   position: sticky;
   top: 88px;
-  max-height: calc(100vh - 112px);
-  /* 88px top + 24px space at the bottom */
-  overflow-y: auto;
-  scrollbar-width: thin;
 }
 
 /* Tablet: the activity feed moves below the rooms, so it shouldn't stick */
 @media (max-width: 1024px) {
   .home-activity {
     position: static;
-    max-height: none;
-    overflow-y: visible;
   }
 }
 

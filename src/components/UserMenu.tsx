@@ -50,7 +50,7 @@ export default function UserMenu() {
   async function handleLogout() {
     close();
     await logout();
-    navigate("/");
+    navigate("/login");
   }
 
   return (

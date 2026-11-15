@@ -64,19 +64,20 @@ export default function ActivityFeed() {
           <article key={message.id} className="card activity-item">
             <div className="activity-meta">
               <Avatar src={message.user_avatar} userId={message.user} />
-              <div>
-                <Link to={`/profile/${message.user}`}>
-                  @{message.user_name}
-                </Link>
+            <div className="activity-meta-text">
+                <p>
+                  <Link to={`/profile/${message.user}`}>
+                    @{message.user_name}
+                  </Link>
+                  <span className="muted"> replied to </span>
+                  <Link to={`/room/${message.room}`}>{message.room_name}</Link>
+                </p>
                 <p className="muted">{timeAgo(message.created)}</p>
               </div>
             </div>
 
-            <p className="muted">
-              replied to{" "}
-              <Link to={`/room/${message.room}`}>{message.room_name}</Link>
-            </p>
             <p className="activity-body">{message.body}</p>
+            
 
             {user?.id === message.user && (
               <button

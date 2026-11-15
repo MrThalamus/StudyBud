@@ -48,3 +48,29 @@ export interface RoomFormValues {
   topic_name: string; 
   description: string;
 }
+
+
+// ---------- Admin panel ----------
+
+// Admin list endpoints return one page at a time, wrapped like this
+export interface Paginated<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface AdminRoom {
+  id: number;
+  name: string;
+  description: string | null;
+  topic: number | null;
+  topic_name: string | null;
+  host: number | null;
+  host_name: string | null;
+  participants: number[];
+  participant_names: string[];
+  message_count: number;
+  created: string;
+  updated: string;
+}

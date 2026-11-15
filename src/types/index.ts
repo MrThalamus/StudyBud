@@ -39,6 +39,7 @@ export interface User {
 }
 
 export interface CurrentUser extends User {
+  is_superuser: boolean;
   email: string;
 }
 

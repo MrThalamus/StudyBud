@@ -8,6 +8,8 @@ import TopicsSidebar from "../components/TopicsSidebar";
 import RoomCard from "../components/RoomCard";
 import SearchBar from "../components/SearchBar";
 import ActivityFeed from "../components/ActivityFeed";
+import AdminMenu from "../components/AdminMenu";
+import { useAuth } from "../context/useAuth";
 import type { Room, Topic } from "../types";
 
 interface RoomsResult {
@@ -17,6 +19,7 @@ interface RoomsResult {
 }
 
 export default function Home() {
+    const { user } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
     const q = searchParams.get("q") ?? "";
 
@@ -54,7 +57,10 @@ export default function Home() {
 
     return (
       <div className="container layout">
-        <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
+        <div className="home-sidebar">
+          {user?.is_superuser && <AdminMenu />}
+          <TopicsSidebar topics={topics} active={q} onSelect={setQ} />
+        </div>
 
         <main>
           <h2 className="section-title">Study Room</h2>
@@ -82,7 +88,7 @@ export default function Home() {
           </div>
         </main>
 
-        <aside>
+        <aside className="home-activity">
           <ActivityFeed />
         </aside>
       </div>

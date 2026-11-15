@@ -170,6 +170,45 @@ img {
   }
 }
 
+.home-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Home: left column stays put while the room list scrolls */
+.home-sidebar {
+  position: sticky;
+  top: 88px;
+  /* 64px navbar + 24px gap */
+}
+
+/* Right column stays put too, and scrolls inside itself if the feed is long */
+.home-activity {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100vh - 112px);
+  /* 88px top + 24px space at the bottom */
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Tablet: the activity feed moves below the rooms, so it shouldn't stick */
+@media (max-width: 1024px) {
+  .home-activity {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+/* Phone: everything is one column, so nothing sticks */
+@media (max-width: 720px) {
+  .home-sidebar {
+    position: static;
+  }
+}
+
 .room-feed {
   display: flex;
   flex-direction: column;

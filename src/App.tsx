@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,7 +10,11 @@ import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import NotFound from "./pages/NotFound";
-
+import RequireAdmin from "./components/RequireAdmin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminRooms from "./pages/admin/AdminRooms";
+import AdminTopics from "./pages/admin/AdminTopics";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 
 function App() {
@@ -42,6 +46,7 @@ function App() {
         />
         <Route path="/profile/:id" element={<Profile />} />
 
+        {/* Edit profile */}
         <Route
           path="/settings"
           element={
@@ -50,6 +55,21 @@ function App() {
             </RequireAuth>
           }
         />
+
+        {/* Admin (superusers only) */}
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <Outlet />
+            </RequireAdmin>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="rooms" element={<AdminRooms />} />
+          <Route path="topics" element={<AdminTopics />} />
+          <Route path="users" element={<AdminUsers />} />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

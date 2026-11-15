@@ -1,0 +1,19 @@
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+.admin-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-placeholder {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}

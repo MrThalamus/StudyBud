@@ -1,0 +1,46 @@
+.admin-menu {
+  position: relative;
+}
+
+.admin-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-menu-trigger:hover,
+.admin-menu-trigger[aria-expanded="true"] {
+  border-color: var(--primary-soft);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+/* Push the arrow to the right edge of the button */
+.admin-menu-trigger .user-menu-chevron {
+  margin-left: auto;
+}
+
+/* Open inline (in the page flow) instead of floating,
+   so the topics below get pushed down */
+.admin-menu .user-menu-panel {
+  position: static;
+  margin-top: 8px;
+  box-shadow: none;
+}
+
+/* The page you're currently on */
+.user-menu-item.is-active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}

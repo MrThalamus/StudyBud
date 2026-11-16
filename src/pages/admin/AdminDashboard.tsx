@@ -2,7 +2,7 @@ import "./AdminPage.css";
 
 export default function AdminDashboard() {
   return (
-    <div className="container admin-page">
+    <div className="admin-page">
       <header className="admin-page-header">
         <h1>Dashboard</h1>
         <p className="muted">An overview of everything on StudyBud.</p>

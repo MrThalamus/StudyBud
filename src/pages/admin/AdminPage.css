@@ -1,9 +1,28 @@
+/* Sidebar + content, used by AdminLayout */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.admin-content {
+  min-width: 0;
+  /* lets wide tables scroll inside instead of stretching the page */
+}
+
+@media (max-width: 720px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-page {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-top: 24px;
-  padding-bottom: 24px;
 }
 
 .admin-page-header {
@@ -99,4 +118,43 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+/* ---------- Badges (role, status) ---------- */
+.admin-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-badge-admin {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.admin-badge-staff {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.admin-badge-user {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.admin-badge-active {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.admin-badge-inactive {
+  background: #fef2f2;
+  color: var(--danger);
+}
+
+.admin-nowrap {
+  white-space: nowrap;
 }

@@ -1,30 +1,9 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
-
-import {
-  ChevronDownIcon,
-  DashboardIcon,
-  RoomsIcon,
-  ShieldIcon,
-  TopicsIcon,
-  UsersIcon,
-} from "./icons";
+import { ADMIN_LINKS } from "./AdminLinks";
+import { ChevronDownIcon, ShieldIcon } from "./icons";
 import "./UserMenu.css";
 import "./AdminMenu.css";
-
-interface AdminLink {
-  to: string;
-  label: string;
-  icon: ReactNode;
-}
-
-const ADMIN_LINKS: AdminLink[] = [
-  { to: "/admin", label: "Dashboard", icon: <DashboardIcon /> },
-  { to: "/admin/rooms", label: "Rooms", icon: <RoomsIcon /> },
-  { to: "/admin/topics", label: "Topics", icon: <TopicsIcon /> },
-  { to: "/admin/users", label: "Users", icon: <UsersIcon /> },
-];
 
 // Remember open/closed in the browser, so it survives page changes and refresh
 const STORAGE_KEY = "admin-menu-open";
@@ -49,8 +28,6 @@ export default function AdminMenu() {
       // Storage blocked (e.g. some private windows): menu still works, just won't remember
     }
   }
-
-
 
   return (
     <div className="admin-menu">

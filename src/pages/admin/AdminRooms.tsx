@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
 import { ADMIN_PAGE_SIZE, getAdminRooms } from "../../api/admin";
 import { getErrorMessages } from "../../utils/getErrorMessages";
+import AdminPagination from "../../components/AdminPagination";
 import type { AdminRoom } from "../../types";
 import "./AdminPage.css";
 
@@ -48,7 +49,7 @@ export default function AdminRooms() {
   }
 
   return (
-    <div className="container admin-page">
+    <div className="admin-page">
       <header className="admin-page-header">
         <h1>Rooms</h1>
         <p className="muted">Create, edit and delete study rooms.</p>
@@ -117,27 +118,13 @@ export default function AdminRooms() {
           </div>
 
           {result.total > 0 && (
-            <nav className="admin-pagination">
-              <button
-                type="button"
-                className="btn"
-                disabled={page <= 1}
-                onClick={() => goToPage(page - 1)}
-              >
-                ← Previous
-              </button>
-              <span className="muted">
-                Page {page} of {totalPages} · {result.total} rooms
-              </span>
-              <button
-                type="button"
-                className="btn"
-                disabled={page >= totalPages}
-                onClick={() => goToPage(page + 1)}
-              >
-                Next →
-              </button>
-            </nav>
+            <AdminPagination
+              page={page}
+              totalPages={totalPages}
+              total={result.total}
+              label="rooms"
+              onPageChange={goToPage}
+            />
           )}
         </>
       )}

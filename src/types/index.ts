@@ -74,3 +74,26 @@ export interface AdminRoom {
   created: string;
   updated: string;
 }
+
+
+export interface AdminTopic {
+  id: number;
+  name: string;
+  room_count: number;
+  host_names: string[];
+}
+
+
+export interface AdminUser {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  bio: string | null;
+  avatar: string | null;
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
+  date_joined: string;
+  last_login: string | null;
+}

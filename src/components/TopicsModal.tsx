@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import type { Topic } from "../types";
 import "./TopicsModal.css";
 
@@ -42,7 +43,9 @@ export default function TopicsModal({
     if (e.target === e.currentTarget) onClose();
   }
 
-  return (
+  // Render at the end of <body>, outside the sticky sidebar,
+  // so the overlay can cover the whole page (navbar and activity too)
+  return createPortal(
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div
         className="modal-card"
@@ -93,6 +96,8 @@ export default function TopicsModal({
           </ul>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
+

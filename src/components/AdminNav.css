@@ -1,0 +1,74 @@
+.admin-nav {
+  position: sticky;
+  top: 88px;
+  /* 64px navbar + 24px gap */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.admin-nav-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 6px 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.admin-nav-link,
+.admin-nav-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}
+
+.admin-nav-link:hover,
+.admin-nav-back:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* The page you're on */
+.admin-nav-link.is-active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.admin-nav-back {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Phone: a row of tabs you can swipe sideways */
+@media (max-width: 720px) {
+  .admin-nav {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 6px;
+  }
+
+  .admin-nav-title,
+  .admin-nav-back {
+    display: none;
+  }
+
+  .admin-nav-link {
+    white-space: nowrap;
+  }
+}

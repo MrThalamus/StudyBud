@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRooms from "./pages/admin/AdminRooms";
 import AdminTopics from "./pages/admin/AdminTopics";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminLayout from "./pages/admin/AdminLayout";
 
 
 function App() {
@@ -61,7 +62,7 @@ function App() {
           path="/admin"
           element={
             <RequireAdmin>
-              <Outlet />
+              <AdminLayout />
             </RequireAdmin>
           }
         >

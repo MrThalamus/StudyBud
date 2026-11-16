@@ -8,6 +8,7 @@ import { getErrorMessages } from "../utils/getErrorMessages";
 import Avatar from "../components/Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import MessageForm from "../components/MessageForm";
+import ConfirmDialog from "../components/ConfirmDialog";
 import type { Message, Room, User } from "../types";
 import "./RoomDetail.css";
 
@@ -25,36 +26,34 @@ export default function RoomDetail() {
   const { id } = useParams();
   const roomId = Number(id);
   const navigate = useNavigate();
-  const [roomErrors, setRoomErrors] = useState<string[]>([]);
-    const [deletingRoom, setDeletingRoom] = useState(false);
+  const [confirmRoomDelete, setConfirmRoomDelete] = useState(false);
   const { user } = useAuth();
   const [result, setResult] = useState<RoomResult | null>(null);
-    const [deleteErrors, setDeleteErrors] = useState<string[]>([]);
-
+  const [pendingMessageId, setPendingMessageId] = useState<number | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
 
-        Promise.all([
-          getRoom(roomId, controller.signal),
-          getRoomMessages(roomId, controller.signal),
-          getRoomParticipants(roomId, controller.signal),
-        ])
-          .then(([room, messages, participants]) =>
-            setResult({ id: roomId, room, messages, participants, errors: [] }),
-          )
+    Promise.all([
+      getRoom(roomId, controller.signal),
+      getRoomMessages(roomId, controller.signal),
+      getRoomParticipants(roomId, controller.signal),
+    ])
+      .then(([room, messages, participants]) =>
+        setResult({ id: roomId, room, messages, participants, errors: [] }),
+      )
 
-          .catch((err) => {
-            if (isCancel(err)) return;
-            const notFound = isAxiosError(err) && err.response?.status === 404;
-            setResult({
-              id: roomId,
-              room: null,
-              messages: [],
-              participants: [],
-              errors: notFound ? ["Room not found."] : getErrorMessages(err),
-            });
-          });
+      .catch((err) => {
+        if (isCancel(err)) return;
+        const notFound = isAxiosError(err) && err.response?.status === 404;
+        setResult({
+          id: roomId,
+          room: null,
+          messages: [],
+          participants: [],
+          errors: notFound ? ["Room not found."] : getErrorMessages(err),
+        });
+      });
 
     return () => controller.abort();
   }, [roomId]);
@@ -75,61 +74,43 @@ export default function RoomDetail() {
       </div>
     );
   }
-    const { room, messages, participants } = result;
+  const { room, messages, participants } = result;
 
+  function handlePosted(message: Message) {
+    setResult((prev) => {
+      if (!prev) return prev;
+      const joined =
+        !user || prev.participants.some((p) => p.id === user.id)
+          ? prev.participants
+          : [...prev.participants, user];
+      return {
+        ...prev,
+        messages: [message, ...prev.messages],
+        participants: joined,
+      };
+    });
+  }
 
-      function handlePosted(message: Message) {
-        setResult((prev) => {
-          if (!prev) return prev;
-          const joined =
-            !user || prev.participants.some((p) => p.id === user.id)
-              ? prev.participants
-              : [...prev.participants, user];
-          return {
+  // Runs when "Delete" is clicked in the message dialog (errors show in the dialog)
+  async function deletePendingMessage() {
+    if (pendingMessageId === null) return;
+    await deleteMessage(pendingMessageId);
+    setResult((prev) =>
+      prev
+        ? {
             ...prev,
-            messages: [message, ...prev.messages],
-            participants: joined,
-          };
-        });
-      }
-
-      async function handleDelete(messageId: number) {
-        if (!window.confirm("Delete this message?")) return;
-
-        setDeleteErrors([]);
-        try {
-          await deleteMessage(messageId);
-          setResult((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  messages: prev.messages.filter((m) => m.id !== messageId),
-                }
-              : prev,
-          );
-        } catch (err) {
-          setDeleteErrors(getErrorMessages(err));
-        }
-      }
-
-        async function handleDeleteRoom() {
-          if (
-            !window.confirm(
-              "Delete this room and all of its messages? This cannot be undone.",
-            )
-          )
-            return;
-
-          setRoomErrors([]);
-          setDeletingRoom(true);
-          try {
-            await deleteRoom(room.id);
-            navigate("/");
-          } catch (err) {
-            setRoomErrors(getErrorMessages(err));
-            setDeletingRoom(false);
+            messages: prev.messages.filter((m) => m.id !== pendingMessageId),
           }
-        }
+        : prev,
+    );
+    setPendingMessageId(null);
+  }
+
+  // Runs when "Delete" is clicked in the room dialog (errors show in the dialog)
+  async function deleteThisRoom() {
+    await deleteRoom(room.id);
+    navigate("/");
+  }
 
   return (
     <div className="container room-detail">
@@ -150,20 +131,13 @@ export default function RoomDetail() {
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={handleDeleteRoom}
-                disabled={deletingRoom}
+                onClick={() => setConfirmRoomDelete(true)}
               >
-                {deletingRoom ? "Deleting..." : "Delete room"}
+                Delete room
               </button>
             </div>
           )}
         </div>
-
-        {roomErrors.map((msg) => (
-          <p key={msg} className="room-detail-error">
-            {msg}
-          </p>
-        ))}
 
         <p className="muted">
           Hosted by{" "}
@@ -180,12 +154,6 @@ export default function RoomDetail() {
         <section className="card">
           <h2 className="section-title">Conversation</h2>
           <MessageForm roomId={room.id} onPosted={handlePosted} />
-
-          {deleteErrors.map((msg) => (
-            <p key={msg} className="room-detail-error">
-              {msg}
-            </p>
-          ))}
 
           {messages.length === 0 && (
             <p className="muted">No messages yet. Be the first to reply.</p>
@@ -208,7 +176,7 @@ export default function RoomDetail() {
                   <button
                     type="button"
                     className="room-detail-delete"
-                    onClick={() => handleDelete(message.id)}
+                    onClick={() => setPendingMessageId(message.id)}
                   >
                     Delete
                   </button>
@@ -243,6 +211,15 @@ export default function RoomDetail() {
           </ul>
         </aside>
       </div>
+      {confirmRoomDelete && (
+        <ConfirmDialog
+          title="Delete room?"
+          message={`"${room.name}" and all of its messages will be deleted. This cannot be undone.`}
+          onConfirm={deleteThisRoom}
+          onCancel={() => setConfirmRoomDelete(false)}
+        />
+      )}
     </div>
   );
 }
+

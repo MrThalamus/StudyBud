@@ -1,0 +1,54 @@
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(16, 24, 40, 0.5);
+}
+
+.confirm-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 20px 40px rgba(16, 24, 40, 0.25);
+}
+
+.confirm-title {
+  font-size: 1.1rem;
+}
+
+.confirm-message {
+  color: var(--text-muted);
+}
+
+.confirm-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Solid red button for the dangerous action */
+.confirm-danger {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+}
+
+.confirm-danger:hover {
+  border-color: #b91c1c;
+  background: #b91c1c;
+}

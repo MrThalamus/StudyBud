@@ -87,7 +87,7 @@ export default function Profile() {
   );
 
   function goToTopic(name: string) {
-    navigate(`/?q=${encodeURIComponent(name)}`);
+    navigate(`/?topic=${encodeURIComponent(name)}`);
   }
 
     return (

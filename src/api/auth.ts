@@ -11,7 +11,7 @@ interface RegisterResponse {
 
 export async function login(email: string, password: string): Promise<string> {
   const response = await client.post<LoginResponse>("/login/", {
-    username: email.toLowerCase(),
+    email,
     password,
   });
   return response.data.token;

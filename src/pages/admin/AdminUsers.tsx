@@ -6,6 +6,7 @@ import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/AdminPagination";
 import type { AdminUser } from "../../types";
 import "./AdminPage.css";
+import { timeAgo } from "../../utils/timeAgo";
 
 interface UsersResult {
   page: number | null; // which page this data belongs to
@@ -96,6 +97,7 @@ export default function AdminUsers() {
                       <th>Role</th>
                       <th>Status</th>
                       <th>Joined</th>
+                      <th>Last login</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,6 +128,11 @@ export default function AdminUsers() {
                           </td>
                           <td className="admin-nowrap">
                             {formatDate(user.date_joined)}
+                          </td>
+                          <td className="admin-nowrap">
+                            {user.last_login
+                              ? timeAgo(user.last_login)
+                              : "Never"}
                           </td>
                         </tr>
                       );

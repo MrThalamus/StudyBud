@@ -71,11 +71,7 @@ export default function Home() {
     <div className="container layout">
       <div className="home-sidebar">
         {user?.is_superuser && <AdminMenu />}
-        <TopicsSidebar
-          topics={topics}
-          active={topic}
-          onSelect={selectTopic}
-        />
+        <TopicsSidebar topics={topics} active={topic} onSelect={selectTopic} />
       </div>
 
       <main>
@@ -84,9 +80,12 @@ export default function Home() {
           value={q}
           onChange={(value) => updateParam("q", value, true)}
         />
-        <Link to="/create-room" className="btn btn-primary">
-          + Create room
-        </Link>
+        {/* Admins can't host rooms (the backend refuses), so don't offer it */}
+        {!user?.is_superuser && (
+          <Link to="/create-room" className="btn btn-primary">
+            + Create room
+          </Link>
+        )}
 
         {roomsLoading && <p>Loading rooms...</p>}
         {result.errors.map((msg) => (
@@ -102,11 +101,7 @@ export default function Home() {
 
         <div className="room-feed">
           {result.rooms.map((room) => (
-            <RoomCard
-              key={room.id}
-              room={room}
-              onTopicClick={selectTopic}
-            />
+            <RoomCard key={room.id} room={room} onTopicClick={selectTopic} />
           ))}
         </div>
       </main>

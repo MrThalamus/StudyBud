@@ -46,6 +46,10 @@
   font-weight: 500;
 }
 
+.admin-form-field textarea {
+  resize: vertical;
+}
+
 .admin-form-error {
   color: var(--danger);
   font-size: 0.875rem;

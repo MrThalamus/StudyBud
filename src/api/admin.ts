@@ -3,6 +3,7 @@ import type {
   AdminRoom,
   AdminTopic,
   AdminTopicInput,
+  AdminRoomInput,
   AdminUser,
   AdminStats,
   Paginated,
@@ -26,6 +27,15 @@ export async function getAdminRooms(
     signal,
   });
   return response.data;
+}
+// The server answers 201 with the new room
+export async function createAdminRoom(data: AdminRoomInput): Promise<AdminRoom> {
+  const response = await client.post<AdminRoom>("/admin/rooms/", data);
+  return response.data;
+}
+
+export async function deleteAdminRoom(id: number): Promise<void> {
+  await client.delete(`/admin/rooms/${id}/`);
 }
 
 export async function getAdminTopics(

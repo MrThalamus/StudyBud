@@ -82,6 +82,13 @@ export interface AdminTopic {
   room_count: number;
   host_names: string[];
 }
+// What we SEND to create or edit a room (ids, not names)
+export interface AdminRoomInput {
+  name: string;
+  description: string;
+  topic: number;
+  host: number;
+}
 
 // What we SEND to create or rename a topic (AdminTopic is what we receive)
 export interface AdminTopicInput {

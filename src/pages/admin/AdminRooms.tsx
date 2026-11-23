@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 import { isCancel } from "axios";
-import { getAdminRooms } from "../../api/admin";
+import {
+  createAdminRoom,
+  deleteAdminRoom,
+  getAdminRooms,
+  getAdminUsers,
+} from "../../api/admin";
+import { getTopics } from "../../api/topics";
 import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/admin/AdminPagination";
 import NoTopicBadge from "../../components/topics/NoTopicBadge";
-import type { AdminRoom } from "../../types";
-import "./AdminPage.css";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
+import AdminFormModal from "../../components/admin/AdminFormModal";
+import type { AdminRoom, AdminRoomInput, AdminUser, Topic } from "../../types";
+
 
 interface RoomsResult {
   page: number | null; // which page this data belongs to
@@ -14,6 +22,38 @@ interface RoomsResult {
   rooms: AdminRoom[];
   total: number;
   errors: string[];
+}
+
+// The open form. id null = creating; a number = editing that room.
+// topic and host are the <select> values: "" = nothing chosen yet, else the id as text
+interface RoomForm {
+  id: number | null;
+  name: string;
+  description: string;
+  topic: string;
+  host: string;
+}
+
+// Choices for the two dropdowns, loaded when the form opens
+interface FormOptions {
+  topics: Topic[];
+  hosts: AdminUser[];
+  errors: string[];
+}
+
+// Same rule as the backend's validate_host: active and not an admin
+function canHost(user: AdminUser) {
+  return user.is_active && !user.is_superuser && !user.is_staff;
+}
+
+// Text for the delete dialog: a room's messages are deleted with it (CASCADE)
+function deleteWarning(room: AdminRoom): string {
+  const count = room.message_count;
+  if (count === 0) {
+    return `"${room.name}" will be deleted. This cannot be undone.`;
+  }
+  const messageWord = count === 1 ? "message" : "messages";
+  return `"${room.name}" and its ${count} ${messageWord} will be deleted. This cannot be undone.`;
 }
 
 export default function AdminRooms() {
@@ -26,6 +66,17 @@ export default function AdminRooms() {
     total: 0,
     errors: [],
   });
+  // The room waiting for "Delete?" confirmation (null = no dialog)
+  const [pendingDelete, setPendingDelete] = useState<AdminRoom | null>(null);
+
+  // null = form closed
+  const [form, setForm] = useState<RoomForm | null>(null);
+
+  // null = dropdown choices still loading
+  const [options, setOptions] = useState<FormOptions | null>(null);
+
+  // Add 1 to fetch the current page again (after a delete)
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Still loading until the data we have matches the page AND size in the URL
   const loading = result.page !== page || result.pageSize !== pageSize;
@@ -36,21 +87,110 @@ export default function AdminRooms() {
 
     getAdminRooms(page, pageSize, controller.signal)
       .then((data) =>
-        setResult({ page, pageSize, rooms: data.results, total: data.count, errors: [] }),
+        setResult({
+          page,
+          pageSize,
+          rooms: data.results,
+          total: data.count,
+          errors: [],
+        }),
       )
       .catch((err) => {
         if (isCancel(err)) return;
-        setResult({ page, pageSize, rooms: [], total: 0, errors: getErrorMessages(err) });
+        setResult({
+          page,
+          pageSize,
+          rooms: [],
+          total: 0,
+          errors: getErrorMessages(err),
+        });
       });
 
     return () => controller.abort();
-  }, [page, pageSize]);
+  }, [page, pageSize, reloadKey]);
+
+  // Topics (all of them) and possible hosts (first 100 users), sorted A-Z
+  async function loadFormOptions() {
+    setOptions(null);
+    try {
+      const [topics, users] = await Promise.all([
+        getTopics(),
+        getAdminUsers(1, 100),
+      ]);
+      setOptions({
+        topics: [...topics].sort((a, b) => a.name.localeCompare(b.name)),
+        hosts: users.results
+          .filter(canHost)
+          .sort((a, b) => a.username.localeCompare(b.username)),
+        errors: [],
+      });
+    } catch (err) {
+      setOptions({ topics: [], hosts: [], errors: getErrorMessages(err) });
+    }
+  }
+
+  function openCreateForm() {
+    setForm({ id: null, name: "", description: "", topic: "", host: "" });
+    void loadFormOptions(); // void = start it, don't wait for it
+  }
+
+  // Change one field of the open form
+  function setField(
+    field: "name" | "description" | "topic" | "host",
+    value: string,
+  ) {
+    setForm((current) => current && { ...current, [field]: value });
+  }
+
+  // No try/catch: if it throws, the modal shows the error
+  async function saveRoom() {
+    if (!form) return;
+    const data: AdminRoomInput = {
+      name: form.name,
+      description: form.description,
+      topic: Number(form.topic), // "3" -> 3
+      host: Number(form.host),
+    };
+
+    await createAdminRoom(data);
+    setForm(null);
+
+    // Newest first: the new room is at the top of page 1
+    if (page === 1) {
+      setReloadKey((key) => key + 1);
+    } else {
+      goToPage(1);
+    }
+  }
+
+  async function deletePendingRoom() {
+    if (!pendingDelete) return;
+    await deleteAdminRoom(pendingDelete.id); // no try/catch: if it throws, the dialog shows the error
+    setPendingDelete(null);
+
+    // Deleted the only row on this page? The page is gone now, so go back one
+    if (result.rooms.length === 1 && page > 1) {
+      goToPage(page - 1);
+    } else {
+      setReloadKey((key) => key + 1);
+    }
+  }
 
   return (
     <div className="admin-page">
-      <header className="admin-page-header">
-        <h1>Rooms</h1>
-        <p className="muted">Create, edit and delete study rooms.</p>
+      <header className="admin-page-header with-action">
+        <div className="admin-page-title">
+          <h1>Rooms</h1>
+          <p className="muted">Create, edit and delete study rooms.</p>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={openCreateForm}
+        >
+          + New room
+        </button>
       </header>
 
       {loading && <p className="muted">Loading rooms...</p>}
@@ -78,6 +218,7 @@ export default function AdminRooms() {
                       <th className="admin-center">Participants</th>
                       <th>Participant names</th>
                       <th className="admin-center">Messages</th>
+                      <th className="admin-actions">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -107,6 +248,25 @@ export default function AdminRooms() {
                           )}
                         </td>
                         <td className="admin-center">{room.message_count}</td>
+                        <td className="admin-actions">
+                          <div className="admin-actions-buttons">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-soft-primary"
+                              aria-label={`Edit ${room.name}`}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-soft-danger"
+                              aria-label={`Delete ${room.name}`}
+                              onClick={() => setPendingDelete(room)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -127,6 +287,92 @@ export default function AdminRooms() {
             />
           )}
         </>
+      )}
+      {form && (
+        <AdminFormModal
+          title="New room"
+          submitLabel="Create"
+          busyLabel="Creating..."
+          onSubmit={saveRoom}
+          onCancel={() => setForm(null)}
+        >
+          {options?.errors.map((msg) => (
+            <p key={msg} className="admin-form-error">
+              {msg}
+            </p>
+          ))}
+
+          <label className="admin-form-field">
+            <span>Name</span>
+            <input
+              className="input"
+              value={form.name}
+              onChange={(e) => setField("name", e.target.value)}
+              maxLength={200}
+              required
+              autoFocus
+            />
+          </label>
+
+          <label className="admin-form-field">
+            <span>Topic</span>
+            <select
+              className="input"
+              value={form.topic}
+              onChange={(e) => setField("topic", e.target.value)}
+              disabled={!options}
+              required
+            >
+              <option value="">
+                {options ? "Choose a topic..." : "Loading..."}
+              </option>
+              {options?.topics.map((topic) => (
+                <option key={topic.id} value={topic.id}>
+                  {topic.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="admin-form-field">
+            <span>Host</span>
+            <select
+              className="input"
+              value={form.host}
+              onChange={(e) => setField("host", e.target.value)}
+              disabled={!options}
+              required
+            >
+              <option value="">
+                {options ? "Choose a host..." : "Loading..."}
+              </option>
+              {options?.hosts.map((user) => (
+                <option key={user.id} value={user.id}>
+                  @{user.username} ({user.name})
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="admin-form-field">
+            <span>Description (optional)</span>
+            <textarea
+              className="input"
+              value={form.description}
+              onChange={(e) => setField("description", e.target.value)}
+              rows={4}
+            />
+          </label>
+        </AdminFormModal>
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete room?"
+          message={deleteWarning(pendingDelete)}
+          onConfirm={deletePendingRoom}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import AdminNav from "../../components/AdminNav";
+import AdminNav from "../../components/admin/AdminNav";
 import "./AdminPage.css";
 
 // Sidebar on the left, the current admin page on the right

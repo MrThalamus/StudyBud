@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { isCancel } from "axios";
-import { getAllMessages, deleteMessage } from "../api/messages";
-import { useAuth } from "../context/useAuth";
-import { getErrorMessages } from "../utils/getErrorMessages";
-import Avatar from "./Avatar";
-import ConfirmDialog from "./ConfirmDialog";
-import { timeAgo } from "../utils/timeAgo";
-import type { Message } from "../types";
+import { getAllMessages, deleteMessage } from "../../api/messages";
+import { useAuth } from "../../context/useAuth";
+import { getErrorMessages } from "../../utils/getErrorMessages";
+import Avatar from "../common/Avatar";
+import ConfirmDialog from "../common/ConfirmDialog";
+import { timeAgo } from "../../utils/timeAgo";
+import type { Message } from "../../types";
 import "./ActivityFeed.css";
 
 const MAX_ITEMS = 5;

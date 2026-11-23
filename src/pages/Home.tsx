@@ -4,11 +4,11 @@ import { isCancel } from "axios";
 import { getRooms } from "../api/rooms";
 import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import TopicsSidebar from "../components/TopicsSidebar";
-import RoomCard from "../components/RoomCard";
-import SearchBar from "../components/SearchBar";
-import ActivityFeed from "../components/ActivityFeed";
-import AdminMenu from "../components/AdminMenu";
+import TopicsSidebar from "../components/topics/TopicsSidebar";
+import RoomCard from "../components/rooms/RoomCard";
+import SearchBar from "../components/common/SearchBar";
+import ActivityFeed from "../components/rooms/ActivityFeed";
+import AdminMenu from "../components/admin/AdminMenu";
 import { useAuth } from "../context/useAuth";
 import type { Room, Topic } from "../types";
 

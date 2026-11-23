@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
-import { createMessage } from "../api/messages";
-import { getErrorMessages } from "../utils/getErrorMessages";
-import type { Message } from "../types";
+import { useAuth } from "../../context/useAuth";
+import { createMessage } from "../../api/messages";
+import { getErrorMessages } from "../../utils/getErrorMessages";
+import type { Message } from "../../types";
 import "./MessageForm.css";
 
 interface MessageFormProps {

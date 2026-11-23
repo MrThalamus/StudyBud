@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { DashboardIcon, RoomsIcon, TopicsIcon, UsersIcon } from "./icons";
+import { DashboardIcon, RoomsIcon, TopicsIcon, UsersIcon } from "../common/icons";
 
 export interface AdminLink {
   to: string;

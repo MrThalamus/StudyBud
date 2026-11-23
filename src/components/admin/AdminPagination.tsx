@@ -1,4 +1,4 @@
-import { ADMIN_PAGE_SIZES } from "../api/admin";
+import { ADMIN_PAGE_SIZES } from "../../api/admin";
 
 interface AdminPaginationProps {
   page: number;

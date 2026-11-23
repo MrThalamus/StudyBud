@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { ADMIN_LINKS } from "./AdminLinks";
-import { ShieldIcon } from "./icons";
+import { ShieldIcon } from "../common/icons";
 import "./AdminNav.css";
 
 // Always-open admin menu shown on every /admin page

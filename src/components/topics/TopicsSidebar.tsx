@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Topic } from "../types";
+import type { Topic } from "../../types";
 import "./TopicsSidebar.css";
 import TopicsModal from "./TopicsModal"; 
 

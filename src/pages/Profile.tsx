@@ -3,13 +3,13 @@ import { Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import { isAxiosError, isCancel } from "axios";
 import { getUser, getUserMessages, getUserRooms } from "../api/users";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import Avatar from "../components/Avatar";
+import Avatar from "../components/common/Avatar";
 import { timeAgo } from "../utils/timeAgo";
-import RoomCard from "../components/RoomCard";
+import RoomCard from "../components/rooms/RoomCard";
 import type { Message, Room, User } from "../types";
 import "./Profile.css";
 import { useAuth } from "../context/useAuth";
-import SearchBar from "../components/SearchBar";
+import SearchBar from "../components/common/SearchBar";
 
 
 const MAX_MESSAGES = 10;

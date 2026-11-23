@@ -3,7 +3,7 @@ import { isCancel } from "axios";
 import { getAdminRooms } from "../../api/admin";
 import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
-import AdminPagination from "../../components/AdminPagination";
+import AdminPagination from "../../components/admin/AdminPagination";
 import type { AdminRoom } from "../../types";
 import "./AdminPage.css";
 

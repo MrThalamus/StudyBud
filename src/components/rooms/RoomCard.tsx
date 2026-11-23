@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import type { Room } from "../types";
-import Avatar from "./Avatar";
-import { timeAgo } from "../utils/timeAgo";
+import type { Room } from "../../types";
+import Avatar from "../common/Avatar";
+import { timeAgo } from "../../utils/timeAgo";
 import "./RoomCard.css";
 
 // To catch mistakes, we can define the props type for the component. This is a good practice in TypeScript to ensure that the component receives the correct props and helps with autocompletion and type checking in your IDE.

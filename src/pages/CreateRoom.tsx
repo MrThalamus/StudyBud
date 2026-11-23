@@ -4,7 +4,7 @@ import { isCancel } from "axios";
 import { createRoom } from "../api/rooms";
 import { getTopics } from "../api/topics";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import RoomForm from "../components/RoomForm";
+import RoomForm from "../components/rooms/RoomForm";
 import type { RoomFormValues, Topic } from "../types";
 import "./FormPage.css";
 

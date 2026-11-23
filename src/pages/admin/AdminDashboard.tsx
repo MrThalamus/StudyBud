@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { isCancel } from "axios";
 import { getAdminStats } from "../../api/admin";
 import { getErrorMessages } from "../../utils/getErrorMessages";
-import AdminMessagesModal from "../../components/AdminMessagesModal";
+import AdminMessagesModal from "../../components/admin/AdminMessagesModal";
 import type { AdminStats } from "../../types";
 import "./AdminPage.css";
 

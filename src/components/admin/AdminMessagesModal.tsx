@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { isCancel } from "axios";
-import { ADMIN_PAGE_SIZE, getAdminMessages } from "../api/admin";
-import { getErrorMessages } from "../utils/getErrorMessages";
-import { timeAgo } from "../utils/timeAgo";
+import { ADMIN_PAGE_SIZE, getAdminMessages } from "../../api/admin";
+import { getErrorMessages } from "../../utils/getErrorMessages";
+import { timeAgo } from "../../utils/timeAgo";
 import AdminPagination from "./AdminPagination";
-import type { Message } from "../types";
-import "./TopicsModal.css"; // shared modal styles: overlay, card, header, scrollable body
+import type { Message } from "../../types";
+import "../topics/TopicsModal.css"; // shared modal styles: overlay, card, header, scrollable body
 import "./AdminMessagesModal.css";
 
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ADMIN_LINKS } from "./AdminLinks";
-import { ChevronDownIcon, ShieldIcon } from "./icons";
-import "./UserMenu.css";
+import { ChevronDownIcon, ShieldIcon } from "../common/icons";
+import "../layout/UserMenu.css";
 import "./AdminMenu.css";
 
 // Remember open/closed in the browser, so it survives page changes and refresh

@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { EyeIcon, EyeOffIcon } from "./icons";
+import { EyeIcon, EyeOffIcon } from "../common/icons";
 import "./AuthCard.css";
 
 interface PasswordFieldProps {

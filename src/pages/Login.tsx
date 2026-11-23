@@ -3,9 +3,9 @@ import type { FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import AuthCard from "../components/AuthCard";
-import PasswordField from "../components/PasswordField";
-import { LockIcon } from "../components/icons";
+import AuthCard from "../components/auth/AuthCard";
+import PasswordField from "../components/auth/PasswordField";
+import { LockIcon } from "../components/common/icons";
 
 export default function Login() {
   const { user, loading, login } = useAuth();

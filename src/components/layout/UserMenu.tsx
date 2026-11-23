@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
-import Avatar from "./Avatar";
-import { ChevronDownIcon, LogoutIcon, WrenchIcon } from "./icons";
+import { useAuth } from "../../context/useAuth";
+import Avatar from "../common/Avatar";
+import { ChevronDownIcon, LogoutIcon, WrenchIcon } from "../common/icons";
 import "./UserMenu.css";
 
 export default function UserMenu() {

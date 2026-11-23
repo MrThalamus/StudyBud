@@ -5,10 +5,10 @@ import { getRoom, getRoomParticipants, deleteRoom } from "../api/rooms";
 import { getRoomMessages, deleteMessage } from "../api/messages";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import Avatar from "../components/Avatar";
+import Avatar from "../components/common/Avatar";
 import { timeAgo } from "../utils/timeAgo";
-import MessageForm from "../components/MessageForm";
-import ConfirmDialog from "../components/ConfirmDialog";
+import MessageForm from "../components/rooms/MessageForm";
+import ConfirmDialog from "../components/common/ConfirmDialog";
 import type { Message, Room, User } from "../types";
 import "./RoomDetail.css";
 

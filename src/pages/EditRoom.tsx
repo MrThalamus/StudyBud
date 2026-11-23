@@ -5,7 +5,7 @@ import { getRoom, updateRoom } from "../api/rooms";
 import { getTopics } from "../api/topics";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessages } from "../utils/getErrorMessages";
-import RoomForm from "../components/RoomForm";
+import RoomForm from "../components/rooms/RoomForm";
 import type { Room, RoomFormValues, Topic } from "../types";
 import "./FormPage.css";
 

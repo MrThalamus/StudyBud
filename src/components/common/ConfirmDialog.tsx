@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
-import { getErrorMessages } from "../utils/getErrorMessages";
+import { getErrorMessages } from "../../utils/getErrorMessages";
 import "./ConfirmDialog.css";
 
 interface ConfirmDialogProps {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
-import type { Topic } from "../types";
+import type { Topic } from "../../types";
 import "./TopicsModal.css";
 
 interface TopicsModalProps {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { getErrorMessages } from "../utils/getErrorMessages";
-import type { RoomFormValues, Topic } from "../types";
+import { getErrorMessages } from "../../utils/getErrorMessages";
+import type { RoomFormValues, Topic } from "../../types";
 import "./RoomForm.css";
 
 interface RoomFormProps {

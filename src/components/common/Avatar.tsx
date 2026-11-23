@@ -1,5 +1,5 @@
-import { useAuth } from "../context/useAuth";
-import { mediaUrl } from "../utils/mediaUrl";
+import { useAuth } from "../../context/useAuth";
+import { mediaUrl } from "../../utils/mediaUrl";
 import "./Avatar.css";
 
 interface AvatarProps {

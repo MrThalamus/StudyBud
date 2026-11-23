@@ -83,6 +83,10 @@ export interface AdminTopic {
   host_names: string[];
 }
 
+// What we SEND to create or rename a topic (AdminTopic is what we receive)
+export interface AdminTopicInput {
+  name: string;
+}
 
 export interface AdminUser {
   id: number;

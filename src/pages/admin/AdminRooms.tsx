@@ -4,6 +4,7 @@ import { getAdminRooms } from "../../api/admin";
 import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/admin/AdminPagination";
+import NoTopicBadge from "../../components/topics/NoTopicBadge";
 import type { AdminRoom } from "../../types";
 import "./AdminPage.css";
 
@@ -86,7 +87,7 @@ export default function AdminRooms() {
                           {(page - 1) * pageSize + index + 1}
                         </td>
                         <td>{room.name}</td>
-                        <td>{room.topic_name ?? "—"}</td>
+                        <td>{room.topic_name ?? <NoTopicBadge />}</td>
                         <td>{room.host_name ?? "—"} </td>
                         <td className="admin-center">
                           {room.participants.length}

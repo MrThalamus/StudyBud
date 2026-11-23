@@ -3,6 +3,8 @@ import type { Room } from "../../types";
 import Avatar from "../common/Avatar";
 import { timeAgo } from "../../utils/timeAgo";
 import "./RoomCard.css";
+import NoTopicBadge from "../topics/NoTopicBadge";
+
 
 // To catch mistakes, we can define the props type for the component. This is a good practice in TypeScript to ensure that the component receives the correct props and helps with autocompletion and type checking in your IDE.
 
@@ -37,7 +39,7 @@ export default function RoomCard({ room, onTopicClick }: RoomCardProps) {
 
       <footer className="room-card-footer">
         <span className="muted">{room.participants.length} joined</span>
-        {room.topic_name && (
+        {room.topic_name ? (
           <button
             type="button"
             className="tag room-card-tag"
@@ -45,6 +47,8 @@ export default function RoomCard({ room, onTopicClick }: RoomCardProps) {
           >
             {room.topic_name}
           </button>
+        ) : (
+          <NoTopicBadge />
         )}
       </footer>
     </article>

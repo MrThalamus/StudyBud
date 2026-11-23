@@ -9,6 +9,7 @@ import Avatar from "../components/common/Avatar";
 import { timeAgo } from "../utils/timeAgo";
 import MessageForm from "../components/rooms/MessageForm";
 import ConfirmDialog from "../components/common/ConfirmDialog";
+import NoTopicBadge from "../components/topics/NoTopicBadge";
 import type { Message, Room, User } from "../types";
 import "./RoomDetail.css";
 
@@ -146,7 +147,8 @@ export default function RoomDetail() {
           ) : (
             "Unknown"
           )}{" "}
-          · {room.topic_name ?? "No topic"} · created {timeAgo(room.created)}
+          · {room.topic_name ?? <NoTopicBadge />} · created{" "}
+          {timeAgo(room.created)}
         </p>
       </section>{" "}
       {room.description && <p>{room.description}</p>}
@@ -211,7 +213,6 @@ export default function RoomDetail() {
           </ul>
         </aside>
       </div>
-
       {pendingMessageId !== null && (
         <ConfirmDialog
           title="Delete message?"
@@ -220,7 +221,6 @@ export default function RoomDetail() {
           onCancel={() => setPendingMessageId(null)}
         />
       )}
-
       {confirmRoomDelete && (
         <ConfirmDialog
           title="Delete room?"

@@ -31,6 +31,21 @@
   gap: 4px;
 }
 
+/* Header with a button on the right (Topics, Rooms, Users) */
+.admin-page-header.with-action {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+}
+
+.admin-page-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .admin-placeholder {
   padding: 48px 20px;
   text-align: center;
@@ -89,6 +104,18 @@
   width: 1%;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+/* Last column: Edit / Delete, as narrow as its buttons */
+.admin-table .admin-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.admin-actions-buttons {
+  display: inline-flex;
+  gap: 8px;
 }
 
 /* Long descriptions: 2 lines, then "..." */

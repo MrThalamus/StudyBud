@@ -1,8 +1,14 @@
 import client from "./client";
-import type { Message } from "../types";
+import type { Message, Paginated } from "../types";
 
-export async function getAllMessages(signal?: AbortSignal): Promise<Message[]> {
-  const response = await client.get<Message[]>("/messages/", { signal });
+export async function getAllMessages(
+  limit: number,
+  signal?: AbortSignal,
+): Promise<Paginated<Message>> {
+  const response = await client.get<Paginated<Message>>("/messages/", {
+    params: { limit },
+    signal,
+  });
   return response.data;
 }
 

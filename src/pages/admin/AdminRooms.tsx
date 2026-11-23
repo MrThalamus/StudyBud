@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
-import { ADMIN_PAGE_SIZE, getAdminRooms } from "../../api/admin";
+import { getAdminRooms } from "../../api/admin";
+import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/AdminPagination";
 import type { AdminRoom } from "../../types";
@@ -9,44 +9,41 @@ import "./AdminPage.css";
 
 interface RoomsResult {
   page: number | null; // which page this data belongs to
+  pageSize: number | null; // ...and at which page size
   rooms: AdminRoom[];
   total: number;
   errors: string[];
 }
 
 export default function AdminRooms() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const { page, pageSize, goToPage, changePageSize } = usePageParams();
 
   const [result, setResult] = useState<RoomsResult>({
     page: null,
+    pageSize: null,
     rooms: [],
     total: 0,
     errors: [],
   });
 
-  // Still loading until the data we have is for the page in the URL
-  const loading = result.page !== page;
-  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+  // Still loading until the data we have matches the page AND size in the URL
+  const loading = result.page !== page || result.pageSize !== pageSize;
+  const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
 
   useEffect(() => {
     const controller = new AbortController();
 
-    getAdminRooms(page, controller.signal)
+    getAdminRooms(page, pageSize, controller.signal)
       .then((data) =>
-        setResult({ page, rooms: data.results, total: data.count, errors: [] }),
+        setResult({ page, pageSize, rooms: data.results, total: data.count, errors: [] }),
       )
       .catch((err) => {
         if (isCancel(err)) return;
-        setResult({ page, rooms: [], total: 0, errors: getErrorMessages(err) });
+        setResult({ page, pageSize, rooms: [], total: 0, errors: getErrorMessages(err) });
       });
 
     return () => controller.abort();
-  }, [page]);
-
-  function goToPage(next: number) {
-    setSearchParams(next === 1 ? {} : { page: String(next) });
-  }
+  }, [page, pageSize]);
 
   return (
     <div className="admin-page">
@@ -86,7 +83,7 @@ export default function AdminRooms() {
                     {result.rooms.map((room, index) => (
                       <tr key={room.id}>
                         <td className="admin-serial">
-                          {(page - 1) * ADMIN_PAGE_SIZE + index + 1}
+                          {(page - 1) * pageSize + index + 1}
                         </td>
                         <td>{room.name}</td>
                         <td>{room.topic_name ?? "—"}</td>
@@ -123,7 +120,9 @@ export default function AdminRooms() {
               totalPages={totalPages}
               total={result.total}
               label="rooms"
+              pageSize={pageSize}
               onPageChange={goToPage}
+              onPageSizeChange={changePageSize}
             />
           )}
         </>

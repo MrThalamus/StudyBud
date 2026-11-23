@@ -211,6 +211,16 @@ export default function RoomDetail() {
           </ul>
         </aside>
       </div>
+
+      {pendingMessageId !== null && (
+        <ConfirmDialog
+          title="Delete message?"
+          message="This message will be removed from the room. This cannot be undone."
+          onConfirm={deletePendingMessage}
+          onCancel={() => setPendingMessageId(null)}
+        />
+      )}
+
       {confirmRoomDelete && (
         <ConfirmDialog
           title="Delete room?"

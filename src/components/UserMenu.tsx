@@ -55,23 +55,35 @@ export default function UserMenu() {
 
   return (
     <div className="user-menu" ref={menuRef}>
-      <button
-        type="button"
-        className="user-menu-trigger"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={toggle}
-      >
-        <Avatar src={user.avatar} userId={user.id} />
+      <div className="user-menu-bar">
+        {/* Avatar + names: go to my profile */}
+        <Link
+          to={`/profile/${user.id}`}
+          className="user-menu-profile"
+          title="View your profile"
+          onClick={close}
+        >
+          <Avatar src={user.avatar} userId={user.id} />
+          <span className="user-menu-names">
+            <span className="user-menu-name">{user.name || user.username}</span>
+            <span className="user-menu-username">@{user.username}</span>
+          </span>
+        </Link>
 
-        <span className="user-menu-names">
-          <span className="user-menu-name">{user.name || user.username}</span>
-          <span className="user-menu-username">@{user.username}</span>
-        </span>
-        <span className={`user-menu-chevron ${open ? "is-open" : ""}`}>
-          <ChevronDownIcon />
-        </span>
-      </button>
+        {/* Arrow only: open / close the menu */}
+        <button
+          type="button"
+          className="user-menu-toggle"
+          aria-label="Account menu"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={toggle}
+        >
+          <span className={`user-menu-chevron ${open ? "is-open" : ""}`}>
+            <ChevronDownIcon />
+          </span>
+        </button>
+      </div>
 
       {open && (
         <div className="user-menu-panel" role="menu">

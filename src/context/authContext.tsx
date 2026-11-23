@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import * as authApi from "../api/auth";
 import { setUnauthorizedHandler } from "../api/client";
-import { getToken, setToken, clearToken } from "../api/token";
+import { getRefreshToken, setTokens, clearTokens } from "../api/token";
 import type { CurrentUser } from "../types";
 import { AuthContext } from "./auth-context";
 
@@ -19,23 +19,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   useEffect(() => {
     async function init() {
-      if (getToken()) {
+      // The refresh token lasts 7 days; if it exists we may still be logged in
+      if (getRefreshToken()) {
         try {
           setUser(await authApi.getMe());
         } catch {
-          clearToken();
+          clearTokens();
         }
       }
+
       setLoading(false);
     }
     init();
   }, []);
 
   async function login(email: string, password: string) {
-    const token = await authApi.login(email, password);
-    setToken(token);
-    setUser(await authApi.getMe()); 
+    const data = await authApi.login(email, password);
+    setTokens(data.access, data.refresh);
+    setUser(data.user); // the server already sent the user, no /users/me/ call
   }
+
 
   async function register(
     name: string,
@@ -44,25 +47,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password1: string,
     password2: string,
   ) {
-    const token = await authApi.register(
+    const data = await authApi.register(
       name,
       username,
       email,
       password1,
       password2,
     );
-    setToken(token);
-    setUser(await authApi.getMe());
+    setTokens(data.access, data.refresh);
+    setUser(data.user); // the server already sent the user, no /users/me/ call
   }
 
   async function logout() {
+    const refresh = getRefreshToken();
     try {
-      await authApi.logout();
+      if (refresh) await authApi.logout(refresh);
+    } catch {
+      // Server couldn't blacklist it (already expired?): log out locally anyway
     } finally {
-      clearToken();
+      clearTokens();
       setUser(null);
     }
   }
+
   function updateUser(next: CurrentUser) {
     setUser(next);
   }

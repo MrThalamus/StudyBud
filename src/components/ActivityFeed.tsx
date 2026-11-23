@@ -20,9 +20,9 @@ export default function ActivityFeed() {
 
   useEffect(() => {
     const controller = new AbortController();
+      getAllMessages(MAX_ITEMS, controller.signal)
+        .then((data) => setMessages(data.results))
 
-    getAllMessages(controller.signal)
-      .then(setMessages)
       .catch((err) => {
         if (isCancel(err)) return;
         setErrors(getErrorMessages(err));
@@ -31,7 +31,6 @@ export default function ActivityFeed() {
     return () => controller.abort();
   }, []);
 
-  const recent = messages?.slice(0, MAX_ITEMS) ?? [];
   // Runs when "Delete" is clicked in the dialog.
   // No try/catch here: if it fails, the dialog catches the error and shows it.
   async function deletePendingMessage() {
@@ -53,12 +52,12 @@ export default function ActivityFeed() {
           {msg}
         </p>
       ))}
-      {messages !== null && recent.length === 0 && (
+      {messages !== null && messages.length === 0 && (
         <p className="muted">No activity yet.</p>
       )}
 
       <div className="activity-list">
-        {recent.map((message) => (
+        {(messages ?? []).map((message) => (
           <article key={message.id} className="card activity-item">
             <div className="activity-meta">
               <Avatar src={message.user_avatar} userId={message.user} />

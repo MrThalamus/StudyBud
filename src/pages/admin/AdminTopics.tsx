@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
-import { ADMIN_PAGE_SIZE, getAdminTopics } from "../../api/admin";
+import { getAdminTopics } from "../../api/admin";
+import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/AdminPagination";
 import type { AdminTopic } from "../../types";
@@ -9,33 +9,35 @@ import "./AdminPage.css";
 
 interface TopicsResult {
   page: number | null; // which page this data belongs to
+  pageSize: number | null; // ...and at which page size
   topics: AdminTopic[];
   total: number;
   errors: string[];
 }
 
 export default function AdminTopics() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const { page, pageSize, goToPage, changePageSize } = usePageParams();
 
   const [result, setResult] = useState<TopicsResult>({
     page: null,
+    pageSize: null,
     topics: [],
     total: 0,
     errors: [],
   });
 
-  // Still loading until the data we have is for the page in the URL
-  const loading = result.page !== page;
-  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+  // Still loading until the data we have matches the page AND size in the URL
+  const loading = result.page !== page || result.pageSize !== pageSize;
+  const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
 
   useEffect(() => {
     const controller = new AbortController();
 
-    getAdminTopics(page, controller.signal)
+    getAdminTopics(page, pageSize, controller.signal)
       .then((data) =>
         setResult({
           page,
+          pageSize,
           topics: data.results,
           total: data.count,
           errors: [],
@@ -45,6 +47,7 @@ export default function AdminTopics() {
         if (isCancel(err)) return;
         setResult({
           page,
+          pageSize,
           topics: [],
           total: 0,
           errors: getErrorMessages(err),
@@ -52,11 +55,7 @@ export default function AdminTopics() {
       });
 
     return () => controller.abort();
-  }, [page]);
-
-  function goToPage(next: number) {
-    setSearchParams(next === 1 ? {} : { page: String(next) });
-  }
+  }, [page, pageSize]);
 
   return (
     <div className="admin-page">
@@ -93,7 +92,7 @@ export default function AdminTopics() {
                     {result.topics.map((topic, index) => (
                       <tr key={topic.id}>
                         <td className="admin-serial">
-                          {(page - 1) * ADMIN_PAGE_SIZE + index + 1}
+                          {(page - 1) * pageSize + index + 1}
                         </td>
                         <td>{topic.name}</td>
                         <td className="admin-center">{topic.room_count}</td>
@@ -125,7 +124,9 @@ export default function AdminTopics() {
               totalPages={totalPages}
               total={result.total}
               label="topics"
+              pageSize={pageSize}
               onPageChange={goToPage}
+              onPageSizeChange={changePageSize}
             />
           )}
         </>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { isCancel } from "axios";
-import { ADMIN_PAGE_SIZE, getAdminUsers } from "../../api/admin";
+import { getAdminUsers } from "../../api/admin";
+import { usePageParams } from "../../hooks/usePageParams";
 import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/AdminPagination";
 import type { AdminUser } from "../../types";
@@ -10,6 +10,7 @@ import { timeAgo } from "../../utils/timeAgo";
 
 interface UsersResult {
   page: number | null; // which page this data belongs to
+  pageSize: number | null; // ...and at which page size
   users: AdminUser[];
   total: number;
   errors: string[];
@@ -33,38 +34,34 @@ function formatDate(dateString: string) {
 }
 
 export default function AdminUsers() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const { page, pageSize, goToPage, changePageSize } = usePageParams();
 
   const [result, setResult] = useState<UsersResult>({
     page: null,
+    pageSize: null,
     users: [],
     total: 0,
     errors: [],
   });
 
-  // Still loading until the data we have is for the page in the URL
-  const loading = result.page !== page;
-  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+  // Still loading until the data we have matches the page AND size in the URL
+  const loading = result.page !== page || result.pageSize !== pageSize;
+  const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
 
   useEffect(() => {
     const controller = new AbortController();
 
-    getAdminUsers(page, controller.signal)
+    getAdminUsers(page, pageSize, controller.signal)
       .then((data) =>
-        setResult({ page, users: data.results, total: data.count, errors: [] }),
+        setResult({ page, pageSize, users: data.results, total: data.count, errors: [] }),
       )
       .catch((err) => {
         if (isCancel(err)) return;
-        setResult({ page, users: [], total: 0, errors: getErrorMessages(err) });
+        setResult({ page, pageSize, users: [], total: 0, errors: getErrorMessages(err) });
       });
 
     return () => controller.abort();
-  }, [page]);
-
-  function goToPage(next: number) {
-    setSearchParams(next === 1 ? {} : { page: String(next) });
-  }
+  }, [page, pageSize]);
 
   return (
     <div className="admin-page">
@@ -106,7 +103,7 @@ export default function AdminUsers() {
                       return (
                         <tr key={user.id}>
                           <td className="admin-serial">
-                            {(page - 1) * ADMIN_PAGE_SIZE + index + 1}
+                            {(page - 1) * pageSize + index + 1}
                           </td>
                           <td>{user.name || "—"}</td>
                           <td>{user.email}</td>
@@ -149,7 +146,9 @@ export default function AdminUsers() {
               totalPages={totalPages}
               total={result.total}
               label="users"
+              pageSize={pageSize}
               onPageChange={goToPage}
+              onPageSizeChange={changePageSize}
             />
           )}
         </>

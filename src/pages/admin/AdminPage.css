@@ -120,6 +120,38 @@
   gap: 12px;
 }
 
+/* "Rows per page [10 v]" on the left */
+.admin-page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.admin-page-size-select {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-page-size-select:focus {
+  outline: 2px solid var(--primary-soft);
+  border-color: var(--primary);
+}
+
+/* Previous / Page X of Y / Next on the right (even when there's no size dropdown) */
+.admin-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
 /* ---------- Badges (role, status) ---------- */
 .admin-badge {
   display: inline-block;
@@ -157,4 +189,61 @@
 
 .admin-nowrap {
   white-space: nowrap;
+}
+
+/* ---------- Dashboard stat cards ---------- */
+/* As many 180px+ columns as fit; they wrap on small screens */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Soft purple lift on hover */
+.admin-stat:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
+}
+
+.admin-stat-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-stat-hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Link cards: normal text color, no underline (links are blue + underlined by default) */
+.admin-stat-link,
+.admin-stat-link:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* A <button> card: drop the browser's button look so it matches the other cards */
+.admin-stat-button {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }

@@ -2,24 +2,45 @@
   position: relative;
 }
 
-.user-menu-trigger {
+/* Profile link and the arrow button sit side by side */
+.user-menu-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Avatar + names: a link to my profile */
+.user-menu-profile {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}
+
+.user-menu-profile:hover {
+  background: var(--surface-hover);
+  text-decoration: none;
+}
+
+/* The arrow: opens the menu */
+.user-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--text);
-  font: inherit;
-  text-align: left;
   cursor: pointer;
 }
 
-.user-menu-trigger:hover {
+.user-menu-toggle:hover {
   background: var(--surface-hover);
 }
-
 .user-menu-names {
   display: flex;
   flex-direction: column;

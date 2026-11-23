@@ -1,0 +1,39 @@
+/* Messages need more room than the topics list (480px).
+   Two classes = stronger than .modal-card alone, so this width always wins */
+.modal-card.admin-messages-modal {
+  max-width: 640px;
+}
+
+.admin-message-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-message:last-child {
+  border-bottom: none;
+}
+
+.admin-message-meta {
+  font-size: 0.85rem;
+}
+
+/* Keep the writer's line breaks; break very long words instead of overflowing */
+.admin-message-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Pagination sits under the scrolling list, so it's always visible */
+.admin-messages-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+}

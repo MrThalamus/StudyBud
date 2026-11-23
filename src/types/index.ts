@@ -97,3 +97,15 @@ export interface AdminUser {
   date_joined: string;
   last_login: string | null;
 }
+
+
+// What /api/admin/stats/ sends back: one number per item
+export interface AdminStats {
+  users: number;
+  active_users: number;
+  admins: number;
+  rooms: number;
+  topics: number;
+  messages: number;
+}
+

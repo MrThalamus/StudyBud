@@ -242,7 +242,7 @@ img {
   color: var(--primary);
 }
 
-.btn.btn-soft-primary:hover {
+.btn.btn-soft-primary:hover:not(:disabled) {
   background: var(--primary);
   color: #fff;
 }
@@ -253,7 +253,7 @@ img {
   color: var(--danger);
 }
 
-.btn.btn-soft-danger:hover {
+.btn.btn-soft-danger:hover:not(:disabled) {
   background: var(--danger);
   color: #fff;
 }

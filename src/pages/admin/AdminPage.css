@@ -79,8 +79,8 @@
 }
 
 .admin-table th {
-  background: var(--surface-hover);
-  color: var(--text-muted);
+  background: var(--primary);
+  color: white;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -116,6 +116,51 @@
 .admin-actions-buttons {
   display: inline-flex;
   gap: 8px;
+}
+
+/* Messages column: chat icon with a count bubble on its corner */
+.admin-msg-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.admin-msg-button:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.admin-msg-badge {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1.5px var(--surface);
+  /* thin white ring, so it stands off the icon */
+}
+
+/* 0 messages: grey instead of red (nothing to look at) */
+.admin-msg-badge.is-zero {
+  background: var(--text-muted);
 }
 
 /* Long descriptions: 2 lines, then "..." */

@@ -5,6 +5,8 @@ import type {
   AdminTopicInput,
   AdminRoomInput,
   AdminUser,
+  AdminUserInput,
+  AdminUserUpdateResponse,
   AdminStats,
   Paginated,
   Message,
@@ -31,6 +33,15 @@ export async function getAdminRooms(
 // The server answers 201 with the new room
 export async function createAdminRoom(data: AdminRoomInput): Promise<AdminRoom> {
   const response = await client.post<AdminRoom>("/admin/rooms/", data);
+  return response.data;
+}
+
+// PATCH = change only the fields we send
+export async function updateAdminRoom(
+  id: number,
+  data: AdminRoomInput,
+): Promise<AdminRoom> {
+  const response = await client.patch<AdminRoom>(`/admin/rooms/${id}/`, data);
   return response.data;
 }
 
@@ -81,6 +92,27 @@ export async function getAdminUsers(
   return response.data;
 }
 
+// The server answers 201 with the new user (never the password)
+export async function createAdminUser(data: AdminUserInput): Promise<AdminUser> {
+  const response = await client.post<AdminUser>("/admin/users/", data);
+  return response.data;
+}
+
+// PATCH = change only the fields we send (no password = keep the old one)
+export async function updateAdminUser(
+  id: number,
+  data: AdminUserInput,
+): Promise<AdminUserUpdateResponse> {
+  const response = await client.patch<AdminUserUpdateResponse>(
+    `/admin/users/${id}/`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteAdminUser(id: number): Promise<void> {
+  await client.delete(`/admin/users/${id}/`);
+}
 
 // Dashboard numbers. Not paginated: it's one small object
 export async function getAdminStats(signal?: AbortSignal): Promise<AdminStats> {
@@ -88,13 +120,15 @@ export async function getAdminStats(signal?: AbortSignal): Promise<AdminStats> {
   return response.data;
 }
 
+// roomId = only that room's messages (?room=<id>); leave it out for all messages
 export async function getAdminMessages(
   page: number,
   pageSize: number,
+  roomId?: number,
   signal?: AbortSignal,
 ): Promise<Paginated<Message>> {
   const response = await client.get<Paginated<Message>>("/admin/messages/", {
-    params: { page, page_size: pageSize },
+    params: { page, page_size: pageSize, room: roomId }, // axios leaves out undefined
     signal,
   });
   return response.data;

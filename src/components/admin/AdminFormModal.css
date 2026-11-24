@@ -50,6 +50,26 @@
   resize: vertical;
 }
 
+/* A checkbox and its words on one line */
+.admin-form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.admin-form-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}
+
+.admin-form-hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
 .admin-form-error {
   color: var(--danger);
   font-size: 0.875rem;

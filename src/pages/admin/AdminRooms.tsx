@@ -5,6 +5,7 @@ import {
   deleteAdminRoom,
   getAdminRooms,
   getAdminUsers,
+  updateAdminRoom,
 } from "../../api/admin";
 import { getTopics } from "../../api/topics";
 import { usePageParams } from "../../hooks/usePageParams";
@@ -14,7 +15,8 @@ import NoTopicBadge from "../../components/topics/NoTopicBadge";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import AdminFormModal from "../../components/admin/AdminFormModal";
 import type { AdminRoom, AdminRoomInput, AdminUser, Topic } from "../../types";
-
+import AdminMessagesModal from "../../components/admin/AdminMessagesModal";
+import { MessageIcon } from "../../components/common/icons";
 
 interface RoomsResult {
   page: number | null; // which page this data belongs to
@@ -45,7 +47,10 @@ interface FormOptions {
 function canHost(user: AdminUser) {
   return user.is_active && !user.is_superuser && !user.is_staff;
 }
-
+// Badge text: 7 -> "7", 150 -> "99+" (keeps the bubble small)
+function badgeText(count: number): string {
+  return count > 99 ? "99+" : String(count);
+}
 // Text for the delete dialog: a room's messages are deleted with it (CASCADE)
 function deleteWarning(room: AdminRoom): string {
   const count = room.message_count;
@@ -74,7 +79,8 @@ export default function AdminRooms() {
 
   // null = dropdown choices still loading
   const [options, setOptions] = useState<FormOptions | null>(null);
-
+  // The room whose messages are open in the modal (null = closed)
+  const [messagesRoom, setMessagesRoom] = useState<AdminRoom | null>(null);
   // Add 1 to fetch the current page again (after a delete)
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -117,13 +123,25 @@ export default function AdminRooms() {
         getTopics(),
         getAdminUsers(1, 100),
       ]);
+      const hosts = users.results
+        .filter(canHost)
+        .sort((a, b) => a.username.localeCompare(b.username));
+
       setOptions({
         topics: [...topics].sort((a, b) => a.name.localeCompare(b.name)),
-        hosts: users.results
-          .filter(canHost)
-          .sort((a, b) => a.username.localeCompare(b.username)),
+        hosts,
         errors: [],
       });
+
+      // Editing a room whose host can't host (an admin, or deactivated)?
+      // Clear the host so the form asks for a new one
+      setForm((current) =>
+        current &&
+        current.host !== "" &&
+        !hosts.some((user) => String(user.id) === current.host)
+          ? { ...current, host: "" }
+          : current,
+      );
     } catch (err) {
       setOptions({ topics: [], hosts: [], errors: getErrorMessages(err) });
     }
@@ -132,6 +150,18 @@ export default function AdminRooms() {
   function openCreateForm() {
     setForm({ id: null, name: "", description: "", topic: "", host: "" });
     void loadFormOptions(); // void = start it, don't wait for it
+  }
+
+  // Fill the form from the row. Select values are text: 3 -> "3", null -> ""
+  function openEditForm(room: AdminRoom) {
+    setForm({
+      id: room.id,
+      name: room.name,
+      description: room.description ?? "",
+      topic: room.topic === null ? "" : String(room.topic),
+      host: room.host === null ? "" : String(room.host),
+    });
+    void loadFormOptions();
   }
 
   // Change one field of the open form
@@ -152,14 +182,20 @@ export default function AdminRooms() {
       host: Number(form.host),
     };
 
-    await createAdminRoom(data);
-    setForm(null);
+    if (form.id === null) {
+      await createAdminRoom(data);
+      setForm(null);
 
-    // Newest first: the new room is at the top of page 1
-    if (page === 1) {
-      setReloadKey((key) => key + 1);
+      // Newest first: the new room is at the top of page 1
+      if (page === 1) {
+        setReloadKey((key) => key + 1);
+      } else {
+        goToPage(1);
+      }
     } else {
-      goToPage(1);
+      await updateAdminRoom(form.id, data);
+      setForm(null);
+      setReloadKey((key) => key + 1); // an edited room keeps its place, so stay on this page
     }
   }
 
@@ -247,13 +283,29 @@ export default function AdminRooms() {
                             </span>
                           )}
                         </td>
-                        <td className="admin-center">{room.message_count}</td>
+                        <td className="admin-center">
+                          <button
+                            type="button"
+                            className="admin-msg-button"
+                            onClick={() => setMessagesRoom(room)}
+                            aria-label={`Show ${room.message_count} messages in ${room.name}`}
+                            title="Show messages"
+                          >
+                            <MessageIcon />
+                            <span
+                              className={`admin-msg-badge ${room.message_count === 0 ? "is-zero" : ""}`}
+                            >
+                              {badgeText(room.message_count)}
+                            </span>
+                          </button>
+                        </td>
                         <td className="admin-actions">
                           <div className="admin-actions-buttons">
                             <button
                               type="button"
                               className="btn btn-sm btn-soft-primary"
                               aria-label={`Edit ${room.name}`}
+                              onClick={() => openEditForm(room)}
                             >
                               Edit
                             </button>
@@ -290,9 +342,9 @@ export default function AdminRooms() {
       )}
       {form && (
         <AdminFormModal
-          title="New room"
-          submitLabel="Create"
-          busyLabel="Creating..."
+          title={form.id === null ? "New room" : "Edit room"}
+          submitLabel={form.id === null ? "Create" : "Save"}
+          busyLabel={form.id === null ? "Creating..." : "Saving..."}
           onSubmit={saveRoom}
           onCancel={() => setForm(null)}
         >
@@ -365,7 +417,13 @@ export default function AdminRooms() {
           </label>
         </AdminFormModal>
       )}
-
+      {messagesRoom && (
+        <AdminMessagesModal
+          roomId={messagesRoom.id}
+          title={`Messages in ${messagesRoom.name}`}
+          onClose={() => setMessagesRoom(null)}
+        />
+      )}
       {pendingDelete && (
         <ConfirmDialog
           title="Delete room?"

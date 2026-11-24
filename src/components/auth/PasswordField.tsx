@@ -8,6 +8,7 @@ interface PasswordFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   autoComplete?: string;
+  required?: boolean; // false = may be left empty (e.g. edit user)
 }
 
 export default function PasswordField({
@@ -16,6 +17,7 @@ export default function PasswordField({
   onChange,
   placeholder,
   autoComplete,
+  required = true,
 }: PasswordFieldProps) {
   const id = useId();
   const [visible, setVisible] = useState(false);
@@ -32,7 +34,7 @@ export default function PasswordField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          required
+          required={required}
         />
         <button
           type="button"

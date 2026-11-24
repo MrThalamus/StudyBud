@@ -95,6 +95,18 @@ export interface AdminTopicInput {
   name: string;
 }
 
+// What we SEND to create or edit a user. password: leave it out to keep the old one
+export interface AdminUserInput {
+  name: string;
+  username: string;
+  email: string;
+  bio: string;
+  is_superuser: boolean;
+  is_staff: boolean;
+  is_active: boolean;
+  password?: string;
+}
+
 export interface AdminUser {
   id: number;
   name: string;
@@ -109,6 +121,11 @@ export interface AdminUser {
   last_login: string | null;
 }
 
+// Edit answer: the user, plus a fresh token pair when you changed YOUR OWN password
+export interface AdminUserUpdateResponse extends AdminUser {
+  access?: string;
+  refresh?: string;
+}
 
 // What /api/admin/stats/ sends back: one number per item
 export interface AdminStats {

@@ -13,6 +13,8 @@ import "./AdminMessagesModal.css";
 
 interface AdminMessagesModalProps {
   onClose: () => void;
+    roomId?: number; // only this room's messages; leave out for all messages
+  title?: string; // heading, e.g. "Messages in Study group"
 }
 
 interface MessagesResult {
@@ -25,6 +27,8 @@ interface MessagesResult {
 
 export default function AdminMessagesModal({
   onClose,
+  roomId,
+  title = "All messages",
 }: AdminMessagesModalProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(ADMIN_PAGE_SIZE);
@@ -60,7 +64,7 @@ export default function AdminMessagesModal({
   useEffect(() => {
     const controller = new AbortController();
 
-    getAdminMessages(page, pageSize, controller.signal)
+    getAdminMessages(page, pageSize, roomId, controller.signal)
       .then((data) =>
         setResult({
           page,
@@ -82,7 +86,7 @@ export default function AdminMessagesModal({
       });
 
     return () => controller.abort();
-  }, [page, pageSize]);
+  }, [page, pageSize, roomId]);
 
   // A new size starts again from page 1
   function changePageSize(nextSize: number) {
@@ -100,10 +104,10 @@ export default function AdminMessagesModal({
         className="modal-card admin-messages-modal"
         role="dialog"
         aria-modal="true"
-        aria-label="All messages"
+        aria-label={title}
       >
         <div className="modal-header">
-          <h2 className="modal-title">All messages</h2>
+          <h2 className="modal-title">{title}</h2>
           <button
             type="button"
             className="modal-close"
@@ -135,7 +139,9 @@ export default function AdminMessagesModal({
                       <strong>@{message.user_name ?? "deleted user"}</strong>
                       <span className="muted">
                         {" "}
-                        in {message.room_name} · {timeAgo(message.created)}
+                        {/* one room's modal already says which room */}
+                        {roomId === undefined && `in ${message.room_name} · `}
+                        {timeAgo(message.created)}
                       </span>
                     </p>
                     <p className="admin-message-body">{message.body}</p>

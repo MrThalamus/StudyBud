@@ -319,3 +319,10 @@
   text-align: left;
   cursor: pointer;
 }
+
+/* Several buttons on the right of a page header */
+.admin-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

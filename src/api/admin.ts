@@ -10,7 +10,9 @@ import type {
   AdminStats,
   Paginated,
   Message,
+  ImportUsersResult,
 } from "../types";
+
 
 // Rows-per-page choices in the admin tables (backend allows up to 100)
 export const ADMIN_PAGE_SIZES = [10, 20, 25, 50, 100];
@@ -112,6 +114,13 @@ export async function updateAdminUser(
 
 export async function deleteAdminUser(id: number): Promise<void> {
   await client.delete(`/admin/users/${id}/`);
+}
+
+export async function importAdminUsers(file: File): Promise<ImportUsersResult> {
+  const data = new FormData();
+  data.append("file", file);
+  const response = await client.post<ImportUsersResult>("/admin/users/import/", data);
+  return response.data;
 }
 
 // Dashboard numbers. Not paginated: it's one small object

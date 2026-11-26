@@ -127,6 +127,22 @@ export interface AdminUserUpdateResponse extends AdminUser {
   refresh?: string;
 }
 
+// One row the import could not create. errors = the serializer's field errors,
+// e.g. { email: ["This email already exists"] }
+export interface ImportRowError {
+  row: number;    
+  email: string;
+  errors: Record<string, string[]>;
+}
+
+// What POST /api/admin/users/import/ sends back
+export interface ImportUsersResult {
+  created: number;
+  failed: number;
+  created_users: { row: number; id: number; email: string }[];
+  errors: ImportRowError[];
+}
+
 // What /api/admin/stats/ sends back: one number per item
 export interface AdminStats {
   users: number;

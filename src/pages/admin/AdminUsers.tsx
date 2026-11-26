@@ -8,7 +8,9 @@ import { getErrorMessages } from "../../utils/getErrorMessages";
 import AdminPagination from "../../components/admin/AdminPagination";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import AdminFormModal from "../../components/admin/AdminFormModal";
+import ImportUsersModal from "../../components/admin/ImportUsersModal";
 import PasswordField from "../../components/auth/PasswordField";
+import { UploadIcon } from "../../components/common/icons";
 import type { AdminUser, AdminUserInput } from "../../types";
 import "./AdminPage.css";
 import { timeAgo } from "../../utils/timeAgo";
@@ -84,6 +86,8 @@ export default function AdminUsers() {
   const [form, setForm] = useState<UserForm | null>(null);
   // Add 1 to fetch the current page again (after a delete)
   const [reloadKey, setReloadKey] = useState(0);
+ 
+  const [importOpen, setImportOpen] = useState(false);
   // Still loading until the data we have matches the page AND size in the URL
   const loading = result.page !== page || result.pageSize !== pageSize;
   const totalPages = Math.max(1, Math.ceil(result.total / pageSize));
@@ -115,7 +119,7 @@ export default function AdminUsers() {
     return () => controller.abort();
   }, [page, pageSize, reloadKey]);
 
-    // Fill the form from the row. Password stays empty: blank = keep the current one
+  // Fill the form from the row. Password stays empty: blank = keep the current one
   function openEditForm(user: AdminUser) {
     setForm({
       id: user.id,
@@ -173,7 +177,15 @@ export default function AdminUsers() {
     setForm(null);
     setReloadKey((key) => key + 1); // an edited user keeps their place, so stay on this page
   }
-    async function deletePendingUser() {
+  // New users are listed first: reload page 1, or go there
+  function showNewestUsers() {
+    if (page === 1) {
+      setReloadKey((key) => key + 1);
+    } else {
+      goToPage(1);
+    }
+  }
+  async function deletePendingUser() {
     if (!pendingDelete) return;
     await deleteAdminUser(pendingDelete.id); // no try/catch: if it throws, the dialog shows the error
     setPendingDelete(null);
@@ -192,14 +204,23 @@ export default function AdminUsers() {
           <h1>Users</h1>
           <p className="muted">Manage accounts and admin access.</p>
         </div>
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => setForm(EMPTY_FORM)}
-        >
-          + New user
-        </button>
+        <div className="admin-header-actions">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => setImportOpen(true)}
+          >
+            <UploadIcon />
+            Import Users
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setForm(EMPTY_FORM)}
+          >
+            + New user
+          </button>
+        </div>
       </header>
 
       {loading && <p className="muted">Loading users...</p>}
@@ -407,6 +428,12 @@ export default function AdminUsers() {
             </p>
           )}
         </AdminFormModal>
+      )}
+      {importOpen && (
+        <ImportUsersModal
+          onImported={showNewestUsers}
+          onClose={() => setImportOpen(false)}
+        />
       )}
       {pendingDelete && (
         <ConfirmDialog

@@ -1,0 +1,28 @@
+
+.import-sample-link {
+  align-self: flex-start;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.import-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* The failed-rows list scrolls by itself when there are many */
+.import-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px 12px 12px 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  font-size: 0.875rem;
+}
